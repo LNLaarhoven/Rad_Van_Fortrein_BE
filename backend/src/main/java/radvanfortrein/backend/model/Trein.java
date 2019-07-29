@@ -1,7 +1,9 @@
 package radvanfortrein.backend.model;
 
+import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -20,6 +22,12 @@ public class Trein {
 	private ArrayList<Station> stations;
 
 	public Trein() {
+		this.naam = "test trein";
+		this.geplandeAankomsten = new ArrayList<>();
+		this.werkelijkeAankomsten = new ArrayList<>();
+		this.stations = new ArrayList<>();
+		this.geplandeAankomsten.add(LocalDateTime.now());
+		this.werkelijkeAankomsten.add(this.addRandomTime());
 	}
 	
 	public String getNaam() {
@@ -48,5 +56,22 @@ public class Trein {
 
 	public void setStations(ArrayList<Station> stations) {
 		this.stations = stations;
+	}
+	
+	public LocalDateTime createRandomTime() {
+		Random random = new Random();
+		int millisInDay = 24*60*60;
+		
+		return LocalDateTime.now().plusSeconds(random.nextInt(millisInDay));
+	}
+	
+	public LocalDateTime addRandomTime() {
+		Random random = new Random();
+		int chance = random.nextInt(10);
+		if (chance == 0) {
+			return LocalDateTime.now().plusMinutes(5);
+		} else {
+			return LocalDateTime.now();
+		}
 	}
 }
