@@ -14,6 +14,7 @@ public class Trein {
 	@Id
 	private String naam;
 
+	//@TODO verander misschien object types
 	private ArrayList<LocalDateTime> geplandeAankomsten;
 	private ArrayList<LocalDateTime> werkelijkeAankomsten;
 	private ArrayList<Station> stations;

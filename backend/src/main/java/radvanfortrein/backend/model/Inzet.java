@@ -17,7 +17,6 @@ public class Inzet implements Observer{
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
-	private boolean teLaat;
 	
 	@ManyToOne
 	private Speler speler;
@@ -26,16 +25,8 @@ public class Inzet implements Observer{
 	
 	public Inzet() {}
 	
-	public boolean isTeLaat() {
-		return teLaat;
-	}
-	
 	public long getId() {
 		return this.id;
-	}
-
-	public void setTeLaat(boolean teLaat) {
-		this.teLaat = teLaat;
 	}
 
 
