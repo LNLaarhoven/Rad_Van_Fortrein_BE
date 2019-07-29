@@ -23,7 +23,33 @@ public class Inzet implements Observer{
 	@ManyToOne
 	private Game game;
 	
-	public Inzet() {}
+	private int inzetBedrag;
+	
+	private boolean isTeLaat;
+	
+	public boolean isTeLaat() {
+		return isTeLaat;
+	}
+
+	public void setTeLaat(boolean isTeLaat) {
+		this.isTeLaat = isTeLaat;
+	}
+
+	public Inzet() {
+		this(0, new Speler(), new Game(), 0, false);
+	}
+	
+	public Inzet(Game game, int inzetBedrag, boolean isTeLaat) {
+		this(0, new Speler(), game, inzetBedrag,  isTeLaat);
+	}
+	
+	public Inzet(long id, Speler speler, Game game, int inzetBedrag, boolean isTeLaat){
+		this.id = id;
+		this.speler = speler;
+		this.game = game;
+		this.inzetBedrag = inzetBedrag;
+		this.isTeLaat = isTeLaat;
+	}
 	
 	public long getId() {
 		return this.id;

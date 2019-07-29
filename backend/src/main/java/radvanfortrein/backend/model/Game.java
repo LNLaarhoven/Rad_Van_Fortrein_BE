@@ -21,8 +21,6 @@ public class Game extends Observable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
-	private String resultaat;
-	
 	@OneToOne
 	private Trein trein;
 	
@@ -31,7 +29,7 @@ public class Game extends Observable {
 	
 	@OneToMany
 	private Set<Inzet> inzetten = new HashSet<>();
-	
+
 	public Game() {
 		this(new Trein(), new Station());
 	}
@@ -45,21 +43,12 @@ public class Game extends Observable {
 	}
 	
 	public Game(Trein trein, Station station) {
-		this.resultaat = "Nog niet bekend";
 		this.trein = trein;
 		this.station = station;
 	}
 	
 	public long getId() {
 		return this.id;
-	}
-
-	public String getResultaat() {
-		return resultaat;
-	}
-
-	public void setResultaat(String resultaat) {
-		this.resultaat = resultaat;
 	}
 
 	public Trein getTrein() {
@@ -77,5 +66,12 @@ public class Game extends Observable {
 	public void setStation(Station station) {
 		this.station = station;
 	}
+	
+	public Set<Inzet> getInzetten() {
+		return inzetten;
+	}
 
+	public void setInzetten(Set<Inzet> inzetten) {
+		this.inzetten = inzetten;
+	}
 }
