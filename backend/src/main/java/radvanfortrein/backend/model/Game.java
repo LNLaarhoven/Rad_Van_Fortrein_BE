@@ -74,4 +74,12 @@ public class Game extends Observable {
 	public void setInzetten(Set<Inzet> inzetten) {
 		this.inzetten = inzetten;
 	}
+	
+	public boolean getResult(Trein trein ) {
+		boolean result = false;
+		for(Inzet i : inzetten){
+			result = (trein.isTeLaat() == i.isTeLaat());
+		}
+		return result;
+	}
 }
