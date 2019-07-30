@@ -82,4 +82,11 @@ public class Game extends Observable {
 		}
 		return result;
 	}
+
+	public boolean addInzet(Inzet inzet) {
+		if (inzetten == null)
+			inzetten = new HashSet<>();
+		return inzetten.add(inzet);
+		
+	}
 }

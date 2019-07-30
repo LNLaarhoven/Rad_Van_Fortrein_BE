@@ -10,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 @Entity
 @Table(name = "Inzet")
 public class Inzet implements Observer{
@@ -44,19 +46,22 @@ public class Inzet implements Observer{
 	}
 
 	public Inzet() {
-		this(0, new Speler(), new Game(), 0, false);
+		this( new Speler(), new Game(), 0, false);
 	}
 	
 	public Inzet(Game game, int inzetBedrag, boolean isTeLaat) {
-		this(0, new Speler(), game, inzetBedrag,  isTeLaat);
+		this(new Speler(), game, inzetBedrag,  isTeLaat);
 	}
 	
-	public Inzet(long id, Speler speler, Game game, int inzetBedrag, boolean isTeLaat){
-		this.id = id;
+	
+	public Inzet(Speler speler, Game game, int inzetBedrag, boolean isTeLaat){
 		this.speler = speler;
 		this.game = game;
 		this.setInzetBedrag(inzetBedrag);
 		this.isTeLaat = isTeLaat;
+		
+		speler.addInzet(this);
+		game.addInzet(this);
 	}
 	
 	public long getId() {
@@ -82,6 +87,7 @@ public class Inzet implements Observer{
 	public void setGame(Game game) {
 		this.game = game;
 	}
+	
 	
 	@Override
 	public void update(Observable arg0, Object arg1) {

@@ -1,6 +1,5 @@
 package radvanfortrein.backend.model;
 
-import java.sql.Time;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ public class Trein {
 	private ArrayList<LocalDateTime> geplandeAankomsten;
 	private ArrayList<LocalDateTime> werkelijkeAankomsten;
 	private ArrayList<Station> stations;
-
+	
 	private boolean isTeLaat;
 
 	public Trein() {
