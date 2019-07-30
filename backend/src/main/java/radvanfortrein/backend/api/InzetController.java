@@ -2,60 +2,91 @@ package radvanfortrein.backend.api;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+//import org.springframework.web.bind.annotation.CrossOrigin;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import radvanfortrein.backend.model.Inzet;
 import radvanfortrein.backend.service.InzetService;
 
-@CrossOrigin(origins = "*")
-@RestController
-@RequestMapping(
-		path = "api/inzetten"
-		, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE}
-		, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE}
-		)
+@Component
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@Path("inzet")
+@Api(value = "Controller Inzet objecten", produces = "application/json")
+//@CrossOrigin(origins = "*")
 public class InzetController {
 	
 	@Autowired
 	InzetService inzetService;
 	
-	@PostMapping
-	public ResponseEntity<Inzet> apiCreate(@RequestBody Inzet inzet) {
+	@POST
+	@ApiOperation(
+			value = "Create nieuwe inzet",
+			response = Inzet.class)
+	@ApiResponses(value = {
+			@ApiResponse(code = 200, message = "Inzet toegevoegd"),
+			@ApiResponse(code = 409, message = "Conflict: Verzoek create van inzet, terwijl id al bekend is")
+	})
+	public Response apiCreate(Inzet inzet) {
 		if (inzet.getId() != 0) {
-			return new ResponseEntity<>(HttpStatus.CONFLICT);
+			return Response.status(Response.Status.CONFLICT).build();
 		}
-		return new ResponseEntity<> (inzetService.save(inzet), HttpStatus.OK);
+		return Response.ok(this.inzetService.save(inzet)).build();
 	}
 	
-	@GetMapping
-	public ResponseEntity<Iterable<Inzet>> apiGetAll() {
-		return new ResponseEntity<>(inzetService.findAll(), HttpStatus.OK);
+	@GET
+	public Response apiGetAll() {
+		return Response.ok(this.inzetService.findAll()).build();
 	}
 	
-	@GetMapping (path = "{id}")
-	public ResponseEntity<Optional<Inzet>> apiGetById(@PathVariable long id) {
-		Optional<Inzet> inzet = inzetService.findById(id);
-		return new ResponseEntity<>(inzet, inzet.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
-	}
-	
-	@DeleteMapping (path = "{id}")
-	public ResponseEntity<Inzet> apiDeleteById(@PathVariable long id) {
-		if (!inzetService.findById(id).isPresent()) {
-			return new ResponseEntity<> (HttpStatus.NOT_FOUND);
+	@GET
+	@Path("{id}")
+	public Response apiGetById(@PathParam("id") long id) {
+		Optional<Inzet> inzet = this.inzetService.findById(id);
+		if (inzet.isPresent()) {
+			return Response.ok(inzet.get()).build();
 		} else {
-			inzetService.deleteById(id);
-			return new ResponseEntity<> (HttpStatus.OK);
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+	}
+	
+	@PUT
+	@Path("{id}")
+	public Response apiUpdate(@PathParam("id") long id, Inzet inzet) {
+		if (inzet == null || inzet.getId() != id) {
+			return Response.status(Response.Status.BAD_REQUEST).build();
+		}
+		Optional<Inzet> oldInzet = this.inzetService.findById(inzet.getId());
+		if (!oldInzet.isPresent()) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		}
+		return Response.ok(this.inzetService.save(inzet)).build();
+	}
+	
+	@DELETE
+	@Path("{id}")
+	public Response apiDeleteById(@PathParam("id") long id) {
+		if (!this.inzetService.findById(id).isPresent()) {
+			return Response.status(Response.Status.NOT_FOUND).build();
+		} else {
+			this.inzetService.deleteById(id);
+			return Response.status(Response.Status.OK).build();
 		}
 	}
 }

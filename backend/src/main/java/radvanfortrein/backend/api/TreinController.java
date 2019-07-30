@@ -2,60 +2,47 @@ package radvanfortrein.backend.api;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+//import org.springframework.web.bind.annotation.CrossOrigin;
+
+import io.swagger.annotations.Api;
 import radvanfortrein.backend.model.Trein;
 import radvanfortrein.backend.service.TreinService;
 
-@CrossOrigin(origins = "*")
-@RestController
-@RequestMapping (
-		path = "api/treinen"
-		, consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE}
-		, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE}
-		)
+//@CrossOrigin(origins = "*")
+@Component
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@Path("trein")
+@Api(value = "Controller Trein objecten", produces = "application/json")
 public class TreinController {
 	
 	@Autowired
 	TreinService treinService;
 	
-	@PostMapping
-	public ResponseEntity<Trein> apiCreate(@RequestBody Trein trein) {
-		if (!trein.getNaam().equals("")) {
-			return new ResponseEntity<>(HttpStatus.CONFLICT);
-		}
-		return new ResponseEntity<>(treinService.save(trein), HttpStatus.OK);
+	@GET
+	public Response apiGetAll() {
+		return Response.ok(this.treinService.findAll()).build();
 	}
 	
-	@GetMapping
-	public ResponseEntity<Iterable<Trein>> apiGetAll() {
-		return new ResponseEntity<>(treinService.findAll(), HttpStatus.OK);
-	}
-	
-	@GetMapping (path = "{naam}")
-	public ResponseEntity<Optional<Trein>> apiGetById(@PathVariable String naam) {
-		Optional<Trein> trein = treinService.findById(naam);
-		return new ResponseEntity<>(trein, trein.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
-	}
-	
-	@DeleteMapping (path = "{naam}")
-	public ResponseEntity<Trein> apiDeleteById(@PathVariable String naam) {
-		if (!treinService.findById(naam).isPresent()) {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	@GET
+	@Path("{naam}")
+	public Response apiGetById(@PathParam("naam") String naam) {
+		Optional<Trein> trein = this.treinService.findById(naam);
+
+		if (trein.isPresent()) {
+			return Response.ok(trein.get()).build();
 		} else {
-			treinService.deleteById(naam);
-			return new ResponseEntity<>(HttpStatus.OK);
+			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 	}
 	
