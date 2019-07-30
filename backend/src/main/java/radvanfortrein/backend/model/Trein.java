@@ -25,7 +25,16 @@ public class Trein {
 	private boolean isTeLaat;
 
 	public Trein() {
-		this.naam = "test trein";
+//		this.naam = "test trein";
+//		this.geplandeAankomsten = new ArrayList<>();
+//		this.werkelijkeAankomsten = new ArrayList<>();
+//		this.stations = new ArrayList<>();
+//		this.geplandeAankomsten.add(LocalDateTime.now());
+//		this.werkelijkeAankomsten.add(this.addRandomTime());
+	}
+	
+	public Trein(String naam) {
+		this.naam = naam;
 		this.geplandeAankomsten = new ArrayList<>();
 		this.werkelijkeAankomsten = new ArrayList<>();
 		this.stations = new ArrayList<>();

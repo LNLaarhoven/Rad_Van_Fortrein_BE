@@ -46,7 +46,7 @@ public class Inzet implements Observer{
 	}
 
 	public Inzet() {
-		this( new Speler(), new Game(), 0, false);
+//		this( new Speler(), new Game(), 0, false);
 	}
 	
 	public Inzet(Game game, int inzetBedrag, boolean isTeLaat) {
