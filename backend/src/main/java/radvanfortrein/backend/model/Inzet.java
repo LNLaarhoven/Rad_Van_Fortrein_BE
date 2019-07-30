@@ -35,6 +35,14 @@ public class Inzet implements Observer{
 		this.isTeLaat = isTeLaat;
 	}
 
+	public int getInzetBedrag() {
+		return inzetBedrag;
+	}
+
+	public void setInzetBedrag(int inzetBedrag) {
+		this.inzetBedrag = inzetBedrag;
+	}
+
 	public Inzet() {
 		this(0, new Speler(), new Game(), 0, false);
 	}
@@ -47,7 +55,7 @@ public class Inzet implements Observer{
 		this.id = id;
 		this.speler = speler;
 		this.game = game;
-		this.inzetBedrag = inzetBedrag;
+		this.setInzetBedrag(inzetBedrag);
 		this.isTeLaat = isTeLaat;
 	}
 	
