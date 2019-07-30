@@ -58,4 +58,10 @@ public class Speler {
 	public void setTotaalPunten(int totaalPunten) {
 		this.totaalPunten = totaalPunten;
 	}
+	
+	public boolean addInzet(Inzet inzet) {
+		if (inzetten == null)
+			inzetten = new HashSet<>();
+		return inzetten.add(inzet);
+	}
 }

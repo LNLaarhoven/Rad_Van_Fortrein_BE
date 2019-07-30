@@ -21,7 +21,7 @@ public class Trein {
 	private ArrayList<LocalDateTime> geplandeAankomsten;
 	private ArrayList<LocalDateTime> werkelijkeAankomsten;
 	private ArrayList<Station> stations;
-
+	
 	private boolean isTeLaat;
 
 	public Trein() {

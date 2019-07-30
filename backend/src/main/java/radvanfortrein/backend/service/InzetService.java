@@ -16,6 +16,7 @@ public class InzetService {
 	@Autowired
 	InzetRepository inzetRepository;
 	
+	
 	public Inzet save(Inzet inzet) {
 		return this.inzetRepository.save(inzet);
 	}

@@ -16,6 +16,7 @@ public class SpelerService {
 	@Autowired
 	SpelerRepository spelerRepository;
 	
+	
 	public Speler save(Speler speler) {
 		return this.spelerRepository.save(speler);
 	}
