@@ -31,16 +31,16 @@ public class Game extends Observable {
 	private Set<Inzet> inzetten = new HashSet<>();
 
 	public Game() {
-		this(new Trein(), new Station());
+//		this(new Trein(), new Station());
 	}
 	
-	public Game(Trein trein) {
-		this(trein, new Station());
-	}
+//	public Game(Trein trein) {
+//		this(trein, new Station());
+//	}
 	
-	public Game(Station station) {
-		this(new Trein(), station);
-	}
+//	public Game(Station station) {
+//		this(new Trein(), station);
+//	}
 	
 	public Game(Trein trein, Station station) {
 		this.trein = trein;

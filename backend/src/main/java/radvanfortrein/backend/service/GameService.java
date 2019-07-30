@@ -50,8 +50,8 @@ public class GameService {
 	void initGameDatabase() {
 		if (gameRepository.count()!=0) return;
 		
-		Trein gameTrein = treinService.save(new Trein());
-		Trein gameTrein2 = treinService.save(new Trein());
+		Trein gameTrein = treinService.save(new Trein("eerste trein"));
+		Trein gameTrein2 = treinService.save(new Trein("treede trein"));
 		
 		Station gameStation = stationService.save(new Station("ZL", "Zwolle"));
 		Station gameStation2 = stationService.save(new Station("BGN", "Bergen Op Zoom"));
