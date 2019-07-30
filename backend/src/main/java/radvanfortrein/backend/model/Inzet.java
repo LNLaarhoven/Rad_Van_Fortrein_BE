@@ -4,6 +4,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -11,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "Inzet")
@@ -21,8 +24,10 @@ public class Inzet implements Observer{
 	private long id;
 	
 	@ManyToOne
+	@JsonIgnoreProperties("inzetten")
 	private Speler speler;
 	@ManyToOne
+	@JsonIgnoreProperties("inzetten")
 	private Game game;
 	
 	private int inzetBedrag;
