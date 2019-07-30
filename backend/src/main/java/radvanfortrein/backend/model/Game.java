@@ -5,7 +5,6 @@ import java.util.Observable;
 import java.util.Set;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,16 +34,7 @@ public class Game extends Observable {
 	private Set<Inzet> inzetten = new HashSet<>();
 
 	public Game() {
-//		this(new Trein(), new Station());
 	}
-	
-//	public Game(Trein trein) {
-//		this(trein, new Station());
-//	}
-	
-//	public Game(Station station) {
-//		this(new Trein(), station);
-//	}
 	
 	public Game(Trein trein, Station station) {
 		this.trein = trein;

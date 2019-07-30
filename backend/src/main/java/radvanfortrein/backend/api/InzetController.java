@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import radvanfortrein.backend.model.Game;
 import radvanfortrein.backend.model.Inzet;
+import radvanfortrein.backend.model.Speler;
 import radvanfortrein.backend.service.InzetService;
 
 @RestController
@@ -26,9 +26,14 @@ public class InzetController {
 	InzetService inzetService;
 
 	@PostMapping
-	public ResponseEntity<Inzet> apiCreate(@RequestBody Inzet inzet) {
+	public ResponseEntity<Inzet> apiCreate(@RequestBody Inzet inzet, @RequestBody Speler speler) {
 		if (inzet.getId() != 0) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
+		}
+		if (inzet.getInzetBedrag() > speler.getTotaalPunten() || inzet.getInzetBedrag() < 1) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		} else {
+			speler.setTotaalPunten(speler.getTotaalPunten() - inzet.getInzetBedrag());
 		}
 		return new ResponseEntity<> (inzetService.save(inzet), HttpStatus.OK);
 	}

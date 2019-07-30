@@ -4,14 +4,11 @@ import java.util.Observable;
 import java.util.Observer;
 
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -51,7 +48,6 @@ public class Inzet implements Observer{
 	}
 
 	public Inzet() {
-//		this( new Speler(), new Game(), 0, false);
 	}
 	
 	public Inzet(Game game, int inzetBedrag, boolean isTeLaat) {
