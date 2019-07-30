@@ -51,12 +51,12 @@ public class SpelerController {
 		return Response.ok(this.spelerService.save(speler)).build();
 	}
 	
-	@GET // Retrieve/Read
+	@GET
 	public Response apiGetAll() {
 		return Response.ok(this.spelerService.findAll()).build();
 	}
 	
-	@GET // Retrieve/Read
+	@GET
 	@Path("{id}")
 	public Response apiGetById(@PathParam("id") long id) {
 		Optional<Speler> speler = this.spelerService.findById(id);
@@ -68,7 +68,7 @@ public class SpelerController {
 		}
 	}
 	
-	@PUT // Update
+	@PUT
 	@Path("{id}")
 	public Response apiUpdate(@PathParam("id") long id, Speler speler) {
 		if (speler == null || speler.getId() != id)
@@ -81,7 +81,7 @@ public class SpelerController {
 		return Response.ok(this.spelerService.save(speler)).build();
 	}
 	
-	@DELETE // Delete
+	@DELETE
 	@Path("{id}")
 	public Response apiDeleteById(@PathParam("id") long id) {
 		if (this.spelerService.findById(id).isPresent() == false) {

@@ -29,12 +29,12 @@ public class StationController {
 	@Autowired
 	StationService stationService;
 	
-	@GET // Retrieve/Read
+	@GET
 	public Response apiGetAll() {
 		return Response.ok(this.stationService.findAll()).build();
 	}
 	
-	@GET // Retrieve/Read
+	@GET
 	@Path("{code}")
 	public Response apiGetById(@PathParam("code") String code) {
 		Optional<Station> station = this.stationService.findById(code);

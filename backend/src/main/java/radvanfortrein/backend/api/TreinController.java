@@ -29,12 +29,12 @@ public class TreinController {
 	@Autowired
 	TreinService treinService;
 	
-	@GET // Retrieve/Read
+	@GET
 	public Response apiGetAll() {
 		return Response.ok(this.treinService.findAll()).build();
 	}
 	
-	@GET // Retrieve/Read
+	@GET
 	@Path("{naam}")
 	public Response apiGetById(@PathParam("naam") String naam) {
 		Optional<Trein> trein = this.treinService.findById(naam);
