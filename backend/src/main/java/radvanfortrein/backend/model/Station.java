@@ -19,11 +19,13 @@ public class Station {
 	private ArrayList<Trein> treinen; //@TODO verander misschien object type
 
 	public Station() {
+		this("TEST", "test station");
 	}
 
 	public Station(String code, String naam) {
 		this.code = code;
 		this.naam = naam;
+		this.treinen = new ArrayList<>();
 	}
 	
 	public String getCode() {

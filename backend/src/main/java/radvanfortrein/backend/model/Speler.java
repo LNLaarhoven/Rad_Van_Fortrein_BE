@@ -20,6 +20,8 @@ public class Speler {
 	
 	private String naam;
 	
+	private int totaalPunten = 50;
+	
 	@OneToMany
 	private Set<Inzet> inzetten = new HashSet<>();
 
@@ -47,5 +49,13 @@ public class Speler {
 
 	public void setInzetten(Set<Inzet> inzetten) {
 		this.inzetten = inzetten;
+	}
+
+	public int getTotaalPunten() {
+		return totaalPunten;
+	}
+
+	public void setTotaalPunten(int totaalPunten) {
+		this.totaalPunten = totaalPunten;
 	}
 }
