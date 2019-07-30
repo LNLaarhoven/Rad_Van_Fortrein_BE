@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +41,26 @@ public class TreinController {
 	public ResponseEntity<Optional<Trein>> apiGetById(@PathVariable String naam) {
 		Optional<Trein> trein = treinService.findById(naam);
 		return new ResponseEntity<>(trein, trein.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+	}
+	
+	@PutMapping(path = "{naam}")
+	public ResponseEntity<Trein> apiUpdate(
+			@PathVariable("naam") String naam,
+			@RequestBody Trein trein) {
+		if (trein == null || trein.getNaam() != naam) {
+			return new ResponseEntity<>(
+					HttpStatus.BAD_REQUEST);
+		}
+		
+		Optional<Trein> oldTrein = treinService.findById(trein.getNaam());
+		if (!oldTrein.isPresent()) {
+			return new ResponseEntity<>(
+					HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(
+				treinService.save(trein),
+				HttpStatus.OK);
+				
 	}
 
 	@DeleteMapping (path = "{naam}")
