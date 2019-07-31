@@ -15,9 +15,9 @@ public class Trein {
 	private String naam;
 	
 	private String origin;
-	private Station[] stations;
 	private LocalDateTime[] geplandeAankomsten;
 	private LocalDateTime[] werkelijkeAankomsten;
+	private Station[] stations;
 
 	// CONSTRUCTORS
 	public Trein () {
