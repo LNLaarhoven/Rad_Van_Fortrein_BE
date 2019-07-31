@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +21,11 @@ import radvanfortrein.backend.service.InzetService;
 import radvanfortrein.backend.service.SpelerService;
 
 @RestController
-@RequestMapping("api/inzetten")
+@RequestMapping(
+		path = "api/inzetten",
+		consumes= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE},
+		produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE}
+		)
 public class InzetController {
 
 	@Autowired
