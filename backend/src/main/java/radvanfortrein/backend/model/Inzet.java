@@ -29,23 +29,7 @@ public class Inzet implements Observer{
 	
 	private int inzetBedrag;
 	
-	private boolean isTeLaat;
-	
-	public boolean isTeLaat() {
-		return isTeLaat;
-	}
-
-	public void setTeLaat(boolean isTeLaat) {
-		this.isTeLaat = isTeLaat;
-	}
-
-	public int getInzetBedrag() {
-		return inzetBedrag;
-	}
-
-	public void setInzetBedrag(int inzetBedrag) {
-		this.inzetBedrag = inzetBedrag;
-	}
+	private boolean inzetTeLaat;
 
 	public Inzet() {
 	}
@@ -54,12 +38,11 @@ public class Inzet implements Observer{
 		this(new Speler(), game, inzetBedrag,  isTeLaat);
 	}
 	
-	
 	public Inzet(Speler speler, Game game, int inzetBedrag, boolean isTeLaat){
 		this.speler = speler;
 		this.game = game;
 		this.setInzetBedrag(inzetBedrag);
-		this.isTeLaat = isTeLaat;
+		this.inzetTeLaat = isTeLaat;
 		
 		speler.addInzet(this);
 		game.addInzet(this);
@@ -69,7 +52,22 @@ public class Inzet implements Observer{
 		return this.id;
 	}
 
+	public boolean isInzetTeLaat() {
+		return inzetTeLaat;
+	}
 
+	public void setInzetTeLaat(boolean isTeLaat) {
+		this.inzetTeLaat = isTeLaat;
+	}
+
+	public int getInzetBedrag() {
+		return inzetBedrag;
+	}
+
+	public void setInzetBedrag(int inzetBedrag) {
+		this.inzetBedrag = inzetBedrag;
+	}
+	
 	public Speler getSpeler() {
 		return speler;
 	}

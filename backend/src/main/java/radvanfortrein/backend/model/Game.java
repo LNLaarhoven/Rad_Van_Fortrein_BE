@@ -19,6 +19,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @Table(name = "Games")
 public class Game extends Observable {
 	
+	static final int RESULTAAT_NIET_BEKEND = 0;
+	static final int RESULTAAT_TREIN_TE_LAAT = 1;
+	static final int RESULTAAT_TREIN_OP_TIJD = 2;
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
@@ -32,6 +36,8 @@ public class Game extends Observable {
 	@OneToMany
 	@JsonIgnoreProperties("game")
 	private Set<Inzet> inzetten = new HashSet<>();
+	
+	private int resultaat;
 
 	public Game() {
 	}
@@ -39,6 +45,7 @@ public class Game extends Observable {
 	public Game(Trein trein, Station station) {
 		this.trein = trein;
 		this.station = station;
+		this.resultaat = Game.RESULTAAT_NIET_BEKEND;
 	}
 	
 	public long getId() {
@@ -69,12 +76,21 @@ public class Game extends Observable {
 		this.inzetten = inzetten;
 	}
 	
-	public boolean getResult(Trein trein ) {
-		boolean result = false;
-		for(Inzet i : inzetten){
-			result = (trein.isTeLaat() == i.isTeLaat());
+	public int getResultaat() {
+		this.getTreinResultaat(this.trein);
+		return resultaat;
+	}
+
+	public void setResultaat(int resultaat) {
+		this.resultaat = resultaat;
+	}
+	
+	public void getTreinResultaat(Trein trein) {
+		if (trein.isTeLaat()) {
+			this.resultaat = Game.RESULTAAT_TREIN_TE_LAAT;
+		} else {
+			this.resultaat = Game.RESULTAAT_TREIN_OP_TIJD;
 		}
-		return result;
 	}
 
 	public boolean addInzet(Inzet inzet) {
