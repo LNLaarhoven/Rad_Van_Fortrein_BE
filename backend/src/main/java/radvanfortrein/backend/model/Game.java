@@ -77,7 +77,7 @@ public class Game extends Observable {
 	}
 	
 	public int getResultaat() {
-		this.getTreinResultaat(this.trein);
+		//this.getTreinResultaat(this.trein);
 		return resultaat;
 	}
 
@@ -85,13 +85,13 @@ public class Game extends Observable {
 		this.resultaat = resultaat;
 	}
 	
-	public void getTreinResultaat(Trein trein) {
+	/*public void getTreinResultaat(Trein trein) {
 		if (trein.isTeLaat()) {
 			this.resultaat = Game.RESULTAAT_TREIN_TE_LAAT;
 		} else {
 			this.resultaat = Game.RESULTAAT_TREIN_OP_TIJD;
 		}
-	}
+	}*/
 
 	public boolean addInzet(Inzet inzet) {
 		if (inzetten == null)
