@@ -48,7 +48,7 @@ public class GameService {
 	
 	@PostConstruct 
 	void initGameDatabase() {
-		if (gameRepository.count()!=0) return;
+		/*if (gameRepository.count()!=0) return;
 		
 		Trein gameTrein = treinService.save(new Trein("eerste trein"));
 		Trein gameTrein2 = treinService.save(new Trein("treede trein"));
@@ -78,6 +78,6 @@ public class GameService {
 		spelerService.save(gameSpeler3);
 		spelerService.save(gameSpeler4);
 		gameRepository.save(game);
-		gameRepository.save(game2);
+		gameRepository.save(game2);*/
 	}
 }

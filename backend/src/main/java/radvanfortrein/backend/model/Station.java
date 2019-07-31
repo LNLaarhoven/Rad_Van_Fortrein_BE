@@ -4,40 +4,36 @@ import java.util.ArrayList;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = "Station")
 public class Station {
 
-	@Id
-	private String code;
-
-	private String naam;
-
-	private ArrayList<Trein> treinen; //@TODO verander misschien object type
-
-	public Station() {
-//		this("TEST", "test station");
-	}
-
-	public Station(String code, String naam) {
-		this.code = code;
+	Station(String naam){
 		this.naam = naam;
-		this.treinen = new ArrayList<>();
-	}
-	
-	public String getCode() {
-		return this.code;
 	}
 
+	@Id
+	private String naam;
+	
+	private String code;
+	private ArrayList<Trein> treinen = new ArrayList<>();
+	
 	public String getNaam() {
 		return naam;
 	}
 
 	public void setNaam(String naam) {
 		this.naam = naam;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
 	}
 
 	public ArrayList<Trein> getTreinen() {
@@ -47,5 +43,5 @@ public class Station {
 	public void setTreinen(ArrayList<Trein> treinen) {
 		this.treinen = treinen;
 	}
-
 }
+
