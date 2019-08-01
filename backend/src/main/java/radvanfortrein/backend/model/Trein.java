@@ -1,11 +1,11 @@
 package radvanfortrein.backend.model;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
 
 @Entity
 @Table(name = "Trein")
@@ -15,22 +15,22 @@ public class Trein {
 	private String naam;
 	
 	private String origin;
-	private LocalDateTime[] geplandeAankomsten;
-	private LocalDateTime[] werkelijkeAankomsten;
-	private Station[] stations;
+	private String[] geplandeAankomsten;
+	private String[] werkelijkeAankomsten;
+
+
 
 	// CONSTRUCTORS
 	public Trein () {
 		
 	}
 	
-	public Trein(String naam, String origin, LocalDateTime[] geplandeAankomsten,
-			LocalDateTime[] werkelijkeAankomsten, Station[] station) {
+	public Trein(String naam, String origin, String[] geplandeAankomsten,
+			String[] werkelijkeAankomsten) {
 		this.naam = naam;
 		this.origin = origin;
 		this.geplandeAankomsten = geplandeAankomsten;
 		this.werkelijkeAankomsten = werkelijkeAankomsten;
-		this.stations = station;
 	}
 
 	public String getNaam() {
@@ -49,44 +49,33 @@ public class Trein {
 		this.origin = origin;
 	}
 
-	public LocalDateTime[] getGeplandeAankomsten() {
+	public String[] getGeplandeAankomsten() {
 		return geplandeAankomsten;
 	}
 
-	public void setGeplandeAankomsten(LocalDateTime[] geplandeAankomsten) {
+	public void setGeplandeAankomsten(String[] geplandeAankomsten) {
 		this.geplandeAankomsten = geplandeAankomsten;
 	}
 	
-//	public void setSingleGeplandeAankomsten(LocalDateTime[] geplandeAankomsten, int i) {
+//	public void setSingleGeplandeAankomsten(String[] geplandeAankomsten, int i) {
 //		this.geplandeAankomsten.set(i,geplandeAankomsten);
 //	}
 
-	public LocalDateTime[] getWerkelijkeAankomsten() {
+	public String[] getWerkelijkeAankomsten() {
 		return werkelijkeAankomsten;
 	}
 
-	public void setWerkelijkeAankomsten(LocalDateTime[] werkelijkeAankomsten) {
+	public void setWerkelijkeAankomsten(String[] werkelijkeAankomsten) {
 		this.werkelijkeAankomsten = werkelijkeAankomsten;
 	}
 	
-//	public void setSingleWerkelijkeAankomsten(int i, LocalDateTime geplandeAankomsten) {
+//	public void setSingleWerkelijkeAankomsten(int i, String geplandeAankomsten) {
 //		this.geplandeAankomsten.set(i,geplandeAankomsten);
 //	}
-
-	public Station[] getStations() {
-		return stations;
-	}
-
-	public void setStations(Station[] stations) {
-		this.stations = stations;
-	}
 	
 	public boolean getTeLaat(String station) {
-		for(int i = 0; i < stations.length; i++) {
-			if(stations[i].getNaam().equals(station)) {
-				return geplandeAankomsten[i].isBefore(werkelijkeAankomsten[i]);
-			}
-		}
-		return false;
+
+				return LocalDateTime.parse(geplandeAankomsten[0]).isBefore(LocalDateTime.parse(werkelijkeAankomsten[0]));
+
 	}
 }

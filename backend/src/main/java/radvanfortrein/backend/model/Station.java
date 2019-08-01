@@ -1,10 +1,9 @@
 package radvanfortrein.backend.model;
 
-import java.util.ArrayList;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
 
 @Entity
 @Table(name = "Station")
@@ -14,7 +13,7 @@ public class Station {
 	private String naam;
 
 	private String code;
-	private Trein[] treinen = new Trein[10];
+	private Trein[] treinen;
 
 	public Station() {
 
@@ -23,7 +22,7 @@ public class Station {
 	public Station(String naam) {
 		this.naam = naam;
 	}
-
+	
 	public String getNaam() {
 		return naam;
 	}
