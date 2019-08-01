@@ -27,7 +27,7 @@ public class TreinController {
 
 	@PostMapping
 	public ResponseEntity<Trein> apiCreate(@RequestBody Trein trein) {
-		if (!trein.getNaam().equals("")) {
+		if (trein.getNaam().equals("")) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
 		return new ResponseEntity<>(treinService.save(trein), HttpStatus.OK);
