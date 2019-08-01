@@ -31,7 +31,8 @@ public class TreinController {
 
 	@PostMapping
 	public ResponseEntity<Trein> apiCreate(@RequestBody Trein trein) {
-		if (!trein.getNaam().equals("")) {
+		Optional<Trein> inDataBaseTrein = this.treinService.findById(trein.getNaam());
+		if (inDataBaseTrein.isPresent()) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
 		return new ResponseEntity<>(treinService.save(trein), HttpStatus.OK);
