@@ -21,7 +21,7 @@ import radvanfortrein.backend.service.TreinService;
 @RestController
 @RequestMapping (
 		path = "api/treinen",
-		consumes= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE},
+//		consumes= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE},
 		produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE}
 		)
 public class TreinController {

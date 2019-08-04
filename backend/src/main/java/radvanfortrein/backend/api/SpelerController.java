@@ -21,7 +21,7 @@ import radvanfortrein.backend.service.SpelerService;
 @RestController
 @RequestMapping(
 		path = "api/spelers",
-		consumes= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE},
+//		consumes= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE},
 		produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE}
 		)
 public class SpelerController {

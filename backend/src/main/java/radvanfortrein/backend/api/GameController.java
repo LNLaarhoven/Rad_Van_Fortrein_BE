@@ -21,7 +21,7 @@ import radvanfortrein.backend.service.GameService;
 @RestController
 @RequestMapping (
 		path = "api/games",
-		consumes= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE},
+//		consumes= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE},
 		produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE}
 		)
 public class GameController {
