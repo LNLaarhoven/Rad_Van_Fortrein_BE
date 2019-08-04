@@ -31,7 +31,8 @@ public class StationController {
 
 	@PostMapping
 	public ResponseEntity<Station> apiCreate(@RequestBody Station station) {
-		if (!station.getNaam().equals("")) {
+		Optional<Station> gevondenStation = this.stationService.findById(station.getNaam());
+		if (gevondenStation.isPresent()) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
 		return new ResponseEntity<>(stationService.save(station), HttpStatus.OK);
@@ -52,7 +53,7 @@ public class StationController {
 	public ResponseEntity<Station> apiUpdate(
 			@PathVariable("code") String code,
 			@RequestBody Station station) {
-		if (station == null || station.getCode() != code) {
+		if (station == null || !station.getCode().equals(code)) {
 			return new ResponseEntity<>(
 					HttpStatus.BAD_REQUEST);
 		}

@@ -53,7 +53,7 @@ public class TreinController {
 	public ResponseEntity<Trein> apiUpdate(
 			@PathVariable("naam") String naam,
 			@RequestBody Trein trein) {
-		if (trein == null || trein.getNaam() != naam) {
+		if (trein == null || !trein.getNaam().equals(naam)) {
 			return new ResponseEntity<>(
 					HttpStatus.BAD_REQUEST);
 		}
