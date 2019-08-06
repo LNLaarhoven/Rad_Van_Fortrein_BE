@@ -73,7 +73,7 @@ public class Trein {
 //		this.geplandeAankomsten.set(i,geplandeAankomsten);
 //	}
 	
-	public boolean getTeLaat(String station) {
+	public boolean getTeLaat() {
 
 				return LocalDateTime.parse(geplandeAankomsten[0]).isBefore(LocalDateTime.parse(werkelijkeAankomsten[0]));
 
