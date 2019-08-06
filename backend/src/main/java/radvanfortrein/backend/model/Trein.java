@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 
@@ -18,7 +20,8 @@ public class Trein {
 	private String[] geplandeAankomsten;
 	private String[] werkelijkeAankomsten;
 
-
+	@ManyToOne
+	private Station station;
 
 	// CONSTRUCTORS
 	public Trein () {
@@ -31,6 +34,7 @@ public class Trein {
 		this.origin = origin;
 		this.geplandeAankomsten = geplandeAankomsten;
 		this.werkelijkeAankomsten = werkelijkeAankomsten;
+		this.station = new Station("Duivendrecht");
 	}
 
 	public String getNaam() {
@@ -67,6 +71,14 @@ public class Trein {
 
 	public void setWerkelijkeAankomsten(String[] werkelijkeAankomsten) {
 		this.werkelijkeAankomsten = werkelijkeAankomsten;
+	}
+	
+	public Station getStation() {
+		return station;
+	}
+
+	public void setStation(Station station) {
+		this.station = station;
 	}
 	
 //	public void setSingleWerkelijkeAankomsten(int i, String geplandeAankomsten) {

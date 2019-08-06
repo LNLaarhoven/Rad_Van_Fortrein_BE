@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import radvanfortrein.backend.model.Speler;
 import radvanfortrein.backend.service.SpelerService;
 
-@CrossOrigin(origins="*")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(
 		path = "api/spelers",

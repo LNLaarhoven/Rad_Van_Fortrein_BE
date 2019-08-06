@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import radvanfortrein.backend.model.Trein;
 import radvanfortrein.backend.service.TreinService;
 
-@CrossOrigin(origins="*")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping (
 		path = "api/treinen",
@@ -35,7 +35,8 @@ public class TreinController {
 	public ResponseEntity<Trein> apiCreate(@RequestBody Trein trein) {
 		Optional<Trein> inDataBaseTrein = this.treinService.findById(trein.getNaam());
 		if (inDataBaseTrein.isPresent()) {
-			return new ResponseEntity<>(HttpStatus.CONFLICT);
+//			return new ResponseEntity<>(HttpStatus.CONFLICT);
+			this.apiUpdate(trein.getNaam(), trein);
 		}
 		return new ResponseEntity<>(treinService.save(trein), HttpStatus.OK);
 	}

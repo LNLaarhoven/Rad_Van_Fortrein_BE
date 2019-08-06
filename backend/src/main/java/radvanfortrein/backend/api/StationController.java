@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import radvanfortrein.backend.model.Station;
 import radvanfortrein.backend.service.StationService;
 
-@CrossOrigin(origins="*")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping (
 		path = "api/stations",

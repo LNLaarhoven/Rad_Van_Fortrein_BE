@@ -21,7 +21,7 @@ import radvanfortrein.backend.model.Speler;
 import radvanfortrein.backend.service.InzetService;
 import radvanfortrein.backend.service.SpelerService;
 
-@CrossOrigin(origins="*")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(
 		path = "api/inzetten",
