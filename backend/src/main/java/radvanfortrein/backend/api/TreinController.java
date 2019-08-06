@@ -51,6 +51,12 @@ public class TreinController {
 		return new ResponseEntity<>(trein, trein.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 	}
 	
+	@GetMapping (path = "{naam}/teLaat")
+	public ResponseEntity<Boolean> apiGetTeLaat(@PathVariable String naam) {
+		Optional<Trein> trein = treinService.findById(naam);
+		return new ResponseEntity<>(trein.get().getTeLaat(), trein.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+	}
+	
 	@PutMapping(path = "{naam}")
 	public ResponseEntity<Trein> apiUpdate(
 			@PathVariable("naam") String naam,
