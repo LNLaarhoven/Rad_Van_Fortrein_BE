@@ -1,5 +1,7 @@
 package radvanfortrein.backend.api;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 import radvanfortrein.backend.model.Trein;
 import radvanfortrein.backend.service.TreinService;
 
-@CrossOrigin(origins="*")
+@CrossOrigin(origins = "*")
 @RestController
-@RequestMapping (
-		path = "api/treinen",
+@RequestMapping(path = "api/treinen",
 //		consumes= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE},
-		produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE}
-		)
+		produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE })
 public class TreinController {
 
 	@Autowired
@@ -39,45 +39,51 @@ public class TreinController {
 		}
 		return new ResponseEntity<>(treinService.save(trein), HttpStatus.OK);
 	}
-
+	
 	@GetMapping
 	public ResponseEntity<Iterable<Trein>> apiGetAll() {
-		return new ResponseEntity<>(treinService.findAll(), HttpStatus.OK);
+		Iterable<Trein> trein = treinService.findAll();
+		ArrayList<Trein> treinenNaNu = new ArrayList<>();
+		for (Trein t : trein) {
+			if (LocalDateTime.now().isBefore(LocalDateTime.parse(t.getWerkelijkeAankomsten()[0]))) {
+				treinenNaNu.add(t);
+			} 
+		}
+		return new ResponseEntity<>(treinenNaNu, HttpStatus.OK);
 	}
 
-	@GetMapping (path = "{naam}")
+//	@GetMapping
+//	public ResponseEntity<Iterable<Trein>> apiGetAll() {
+//			return new ResponseEntity<>(treinService.findAll(), HttpStatus.OK);
+//	}
+
+	@GetMapping(path = "{naam}")
 	public ResponseEntity<Optional<Trein>> apiGetById(@PathVariable String naam) {
 		Optional<Trein> trein = treinService.findById(naam);
 		return new ResponseEntity<>(trein, trein.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 	}
-	
-	@GetMapping (path = "{naam}/teLaat")
+
+	@GetMapping(path = "{naam}/teLaat")
 	public ResponseEntity<Boolean> apiGetTeLaat(@PathVariable String naam) {
 		Optional<Trein> trein = treinService.findById(naam);
 		return new ResponseEntity<>(trein.get().getTeLaat(), trein.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 	}
-	
+
 	@PutMapping(path = "{naam}")
-	public ResponseEntity<Trein> apiUpdate(
-			@PathVariable("naam") String naam,
-			@RequestBody Trein trein) {
+	public ResponseEntity<Trein> apiUpdate(@PathVariable("naam") String naam, @RequestBody Trein trein) {
 		if (trein == null || !trein.getNaam().equals(naam)) {
-			return new ResponseEntity<>(
-					HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		
+
 		Optional<Trein> oldTrein = treinService.findById(trein.getNaam());
 		if (!oldTrein.isPresent()) {
-			return new ResponseEntity<>(
-					HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>(
-				treinService.save(trein),
-				HttpStatus.OK);
-				
+		return new ResponseEntity<>(treinService.save(trein), HttpStatus.OK);
+
 	}
 
-	@DeleteMapping (path = "{naam}")
+	@DeleteMapping(path = "{naam}")
 	public ResponseEntity<Trein> apiDeleteById(@PathVariable String naam) {
 		if (!treinService.findById(naam).isPresent()) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
