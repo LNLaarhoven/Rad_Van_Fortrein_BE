@@ -37,7 +37,14 @@ public class InzetController {
 	SpelerService spelerService;
 
 	@PostMapping
-	public ResponseEntity<Inzet> apiCreate(@RequestBody Inzet inzet, @RequestBody Speler speler) {
+	public ResponseEntity<Inzet> apiCreate(@RequestBody Inzet inzet) {
+		Optional<Speler> mogelijkeSpeler = this.spelerService.findById(0);
+		Speler speler;
+		if (mogelijkeSpeler.isPresent()) {
+			speler = mogelijkeSpeler.get();
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
 		if (inzet.getId() != 0) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}

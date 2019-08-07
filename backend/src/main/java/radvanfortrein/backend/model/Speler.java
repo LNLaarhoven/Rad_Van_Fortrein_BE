@@ -1,5 +1,7 @@
 package radvanfortrein.backend.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,16 +19,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Speler {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+//	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
 	private String naam;
 	
 	private int totaalPunten = 50;
 	
-	@OneToMany
-	@JsonIgnoreProperties("speler")
-	private Set<Inzet> inzetten = new HashSet<>();
+//	@JsonIgnoreProperties("speler")
+//	private Set<Inzet> inzetten = new HashSet<>();
+	private String[] inzetten;
 
 	public Speler() {}
 	
@@ -46,11 +48,11 @@ public class Speler {
 		this.naam = naam;
 	}
 
-	public Set<Inzet> getInzetten() {
+	public String[] getInzetten() {
 		return inzetten;
 	}
 
-	public void setInzetten(Set<Inzet> inzetten) {
+	public void setInzetten(String[] inzetten) {
 		this.inzetten = inzetten;
 	}
 
@@ -63,8 +65,9 @@ public class Speler {
 	}
 	
 	public boolean addInzet(Inzet inzet) {
-		if (inzetten == null)
-			inzetten = new HashSet<>();
-		return inzetten.add(inzet);
+		ArrayList<String> strings = new ArrayList<>(Arrays.asList(this.inzetten));
+		strings.add("" + inzet.getId());
+		this.inzetten = strings.toArray(new String[strings.size()]);
+		return true;
 	}
 }

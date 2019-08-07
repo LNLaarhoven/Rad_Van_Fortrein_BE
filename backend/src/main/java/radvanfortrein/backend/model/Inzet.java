@@ -20,11 +20,10 @@ public class Inzet implements Observer{
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
-	@ManyToOne
-	@JsonIgnoreProperties("inzetten")
+//	@JsonIgnoreProperties("inzetten")
 	private Speler speler;
-	@ManyToOne
-	@JsonIgnoreProperties("inzetten")
+	
+//	@JsonIgnoreProperties("inzetten")
 	private Game game;
 	
 	private int inzetBedrag;

@@ -1,5 +1,7 @@
 package radvanfortrein.backend.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Observable;
 import java.util.Set;
@@ -27,15 +29,13 @@ public class Game extends Observable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
-	@OneToOne
 	private Trein trein;
 	
-	@OneToOne
 	private Station station;
 	
-	@OneToMany
-	@JsonIgnoreProperties("game")
-	private Set<Inzet> inzetten = new HashSet<>();
+//	@OneToMany
+//	@JsonIgnoreProperties("game")
+	private String[] inzetten;
 	
 	private int resultaat;
 
@@ -68,11 +68,11 @@ public class Game extends Observable {
 		this.station = station;
 	}
 	
-	public Set<Inzet> getInzetten() {
+	public String[] getInzetten() {
 		return inzetten;
 	}
 
-	public void setInzetten(Set<Inzet> inzetten) {
+	public void setInzetten(String[] inzetten) {
 		this.inzetten = inzetten;
 	}
 	
@@ -94,9 +94,13 @@ public class Game extends Observable {
 	}*/
 
 	public boolean addInzet(Inzet inzet) {
-		if (inzetten == null)
-			inzetten = new HashSet<>();
-		return inzetten.add(inzet);
+		ArrayList<String> strings = new ArrayList<>(Arrays.asList(this.inzetten));
+		strings.add("" + inzet.getId());
+		this.inzetten = strings.toArray(new String[strings.size()]);
+//		if (inzetten == null)
+//			inzetten = new HashSet<>();
+//		return inzetten.add(inzet);
+		return true;
 		
 	}
 }
