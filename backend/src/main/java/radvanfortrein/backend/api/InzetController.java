@@ -1,5 +1,6 @@
 package radvanfortrein.backend.api;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import radvanfortrein.backend.model.Game;
 import radvanfortrein.backend.model.Inzet;
+import radvanfortrein.backend.model.InzetSpelerHolder;
 import radvanfortrein.backend.model.Speler;
+import radvanfortrein.backend.service.GameService;
 import radvanfortrein.backend.service.InzetService;
 import radvanfortrein.backend.service.SpelerService;
 
@@ -35,9 +39,21 @@ public class InzetController {
 	
 	@Autowired
 	SpelerService spelerService;
+	
+	@Autowired
+	GameService gameService;
 
-	@PostMapping
-	public ResponseEntity<Inzet> apiCreate(@RequestBody Inzet inzet, @RequestBody Speler speler) {
+	@PostMapping(path ="{id}")
+	public ResponseEntity<Inzet> apiCreate(@PathVariable("id") String id, @RequestBody InzetSpelerHolder holder) {
+		System.out.println(id);
+		Inzet inzet = holder.getInzet();
+		Speler speler = holder.getSpeler();
+		Optional<Game> game = this.gameService.findById(Long.parseLong(id));
+		if (game.isPresent()) {
+			game.get().addInzet(inzet);
+			this.gameService.save(game.get());
+			inzet.setGame(game.get());
+		}
 		if (inzet.getId() != 0) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
@@ -48,6 +64,7 @@ public class InzetController {
 			speler.setTotaalPunten(speler.getTotaalPunten() - inzet.getInzetBedrag());
 			spelerService.save(speler);
 		}
+		System.out.println(this.getClass() + "" + LocalDateTime.now());
 		return new ResponseEntity<> (inzetService.save(inzet), HttpStatus.OK);
 	}
 

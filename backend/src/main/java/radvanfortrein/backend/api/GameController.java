@@ -1,5 +1,6 @@
 package radvanfortrein.backend.api;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +37,7 @@ public class GameController {
 		if (game.getId() != 0) {
 			return new ResponseEntity<> (HttpStatus.CONFLICT);
 		}
+		System.out.println(this.getClass() + "" + LocalDateTime.now());
 		return new ResponseEntity<> (gameService.save(game), HttpStatus.OK);
 	}
 

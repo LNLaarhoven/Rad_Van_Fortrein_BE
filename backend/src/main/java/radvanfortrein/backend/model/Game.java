@@ -24,7 +24,7 @@ public class Game extends Observable {
 	static final int RESULTAAT_TREIN_OP_TIJD = 2;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+//	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
 	@OneToOne
