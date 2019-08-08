@@ -14,6 +14,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
@@ -29,13 +31,13 @@ public class Game extends Observable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
-	private Trein trein;
+	private String trein;
 	
-	private Station station;
+	private String station;
 	
 //	@OneToMany
 //	@JsonIgnoreProperties("game")
-	private String[] inzetten;
+	private long[] inzetten;
 	
 	private int resultaat;
 
@@ -43,8 +45,8 @@ public class Game extends Observable {
 	}
 	
 	public Game(Trein trein, Station station) {
-		this.trein = trein;
-		this.station = station;
+		this.trein = trein.getNaam();
+		this.station = station.getCode();
 		this.resultaat = Game.RESULTAAT_NIET_BEKEND;
 	}
 	
@@ -52,27 +54,27 @@ public class Game extends Observable {
 		return this.id;
 	}
 
-	public Trein getTrein() {
+	public String getTrein() {
 		return trein;
 	}
 
-	public void setTrein(Trein trein) {
+	public void setTrein(String trein) {
 		this.trein = trein;
 	}
 
-	public Station getStation() {
+	public String getStation() {
 		return station;
 	}
 
-	public void setStation(Station station) {
+	public void setStation(String station) {
 		this.station = station;
 	}
 	
-	public String[] getInzetten() {
+	public long[] getInzetten() {
 		return inzetten;
 	}
 
-	public void setInzetten(String[] inzetten) {
+	public void setInzetten(long[] inzetten) {
 		this.inzetten = inzetten;
 	}
 	
@@ -94,12 +96,7 @@ public class Game extends Observable {
 	}*/
 
 	public boolean addInzet(Inzet inzet) {
-		ArrayList<String> strings = new ArrayList<>(Arrays.asList(this.inzetten));
-		strings.add("" + inzet.getId());
-		this.inzetten = strings.toArray(new String[strings.size()]);
-//		if (inzetten == null)
-//			inzetten = new HashSet<>();
-//		return inzetten.add(inzet);
+		this.inzetten = ArrayUtils.add(this.inzetten, inzet.getId());
 		return true;
 		
 	}

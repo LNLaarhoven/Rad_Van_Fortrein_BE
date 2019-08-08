@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -28,7 +30,7 @@ public class Speler {
 	
 //	@JsonIgnoreProperties("speler")
 //	private Set<Inzet> inzetten = new HashSet<>();
-	private String[] inzetten;
+	private long[] inzetten;
 
 	public Speler() {}
 	
@@ -48,11 +50,11 @@ public class Speler {
 		this.naam = naam;
 	}
 
-	public String[] getInzetten() {
+	public long[] getInzetten() {
 		return inzetten;
 	}
 
-	public void setInzetten(String[] inzetten) {
+	public void setInzetten(long[] inzetten) {
 		this.inzetten = inzetten;
 	}
 
@@ -65,9 +67,7 @@ public class Speler {
 	}
 	
 	public boolean addInzet(Inzet inzet) {
-		ArrayList<String> strings = new ArrayList<>(Arrays.asList(this.inzetten));
-		strings.add("" + inzet.getId());
-		this.inzetten = strings.toArray(new String[strings.size()]);
+		this.inzetten = ArrayUtils.add(this.inzetten, inzet.getId());
 		return true;
 	}
 }
