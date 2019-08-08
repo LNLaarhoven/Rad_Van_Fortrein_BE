@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Observable;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -35,9 +36,10 @@ public class Game extends Observable {
 	
 	private String station;
 	
-//	@OneToMany
-//	@JsonIgnoreProperties("game")
-	private long[] inzetten;
+	@OneToMany(cascade={CascadeType.ALL})
+	@JsonIgnoreProperties("game")
+//	private long[] inzetten;
+	private Set<Inzet> inzetten = new HashSet<>();
 	
 	private int resultaat;
 
@@ -70,11 +72,11 @@ public class Game extends Observable {
 		this.station = station;
 	}
 	
-	public long[] getInzetten() {
+	public Set<Inzet> getInzetten() {
 		return inzetten;
 	}
 
-	public void setInzetten(long[] inzetten) {
+	public void setInzetten(Set<Inzet> inzetten) {
 		this.inzetten = inzetten;
 	}
 	
@@ -95,9 +97,12 @@ public class Game extends Observable {
 		}
 	}*/
 
+//	public boolean addInzet(Inzet inzet) {
+//		this.inzetten = ArrayUtils.add(this.inzetten, inzet.getId());
+//		return true;
+//	}
+	
 	public boolean addInzet(Inzet inzet) {
-		this.inzetten = ArrayUtils.add(this.inzetten, inzet.getId());
-		return true;
-		
+		return this.inzetten.add(inzet);
 	}
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import radvanfortrein.backend.model.Inzet;
 import radvanfortrein.backend.model.Speler;
+import radvanfortrein.backend.service.GameService;
 import radvanfortrein.backend.service.InzetService;
 import radvanfortrein.backend.service.SpelerService;
 
@@ -35,10 +36,13 @@ public class InzetController {
 	
 	@Autowired
 	SpelerService spelerService;
+	
+	@Autowired
+	GameService gameService;
 
 	@PostMapping
 	public ResponseEntity<Inzet> apiCreate(@RequestBody Inzet inzet) {
-		Optional<Speler> mogelijkeSpeler = this.spelerService.findById(0);
+		Optional<Speler> mogelijkeSpeler = this.spelerService.findById(1);
 		Speler speler;
 		if (mogelijkeSpeler.isPresent()) {
 			speler = mogelijkeSpeler.get();
@@ -55,6 +59,9 @@ public class InzetController {
 			speler.setTotaalPunten(speler.getTotaalPunten() - inzet.getInzetBedrag());
 			spelerService.save(speler);
 		}
+		inzet.getGame().addInzet(inzet);
+		this.inzetService.save(inzet);
+		this.gameService.save(inzet.getGame());
 		return new ResponseEntity<> (inzetService.save(inzet), HttpStatus.OK);
 	}
 
