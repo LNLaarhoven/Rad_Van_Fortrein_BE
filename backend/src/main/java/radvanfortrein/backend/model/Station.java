@@ -10,10 +10,9 @@ import javax.persistence.Table;
 public class Station {
 
 	@Id
-	private String naam;
-
 	private String code;
-	private Trein[] treinen;
+	private String naam;
+	private String[] treinen;
 
 	public Station() {
 
@@ -39,11 +38,11 @@ public class Station {
 		this.code = code;
 	}
 
-	public Trein[] getTreinen() {
+	public String[] getTreinen() {
 		return treinen;
 	}
 
-	public void setTreinen(Trein[] treinen) {
+	public void setTreinen(String[] treinen) {
 		this.treinen = treinen;
 	}
 }

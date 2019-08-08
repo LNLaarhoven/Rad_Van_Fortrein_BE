@@ -1,5 +1,7 @@
 package radvanfortrein.backend.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
@@ -17,16 +21,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Speler {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+//	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
 	private String naam;
 	
 	private int totaalPunten = 50;
 	
-	@OneToMany
-	@JsonIgnoreProperties("speler")
-	private Set<Inzet> inzetten = new HashSet<>();
+//	@JsonIgnoreProperties("speler")
+//	private Set<Inzet> inzetten = new HashSet<>();
+	private long[] inzetten;
 
 	public Speler() {}
 	
@@ -46,11 +50,11 @@ public class Speler {
 		this.naam = naam;
 	}
 
-	public Set<Inzet> getInzetten() {
+	public long[] getInzetten() {
 		return inzetten;
 	}
 
-	public void setInzetten(Set<Inzet> inzetten) {
+	public void setInzetten(long[] inzetten) {
 		this.inzetten = inzetten;
 	}
 
@@ -63,8 +67,7 @@ public class Speler {
 	}
 	
 	public boolean addInzet(Inzet inzet) {
-		if (inzetten == null)
-			inzetten = new HashSet<>();
-		return inzetten.add(inzet);
+		this.inzetten = ArrayUtils.add(this.inzetten, inzet.getId());
+		return true;
 	}
 }
