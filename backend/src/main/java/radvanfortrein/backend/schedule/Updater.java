@@ -1,6 +1,7 @@
 package radvanfortrein.backend.schedule;
 
 import radvanfortrein.backend.model.*;
+import radvanfortrein.backend.repository.TreinRepository;
 import radvanfortrein.backend.service.StationService;
 import radvanfortrein.backend.service.TreinService;
 import radvanfortrein.backend.ConsoleMessages.*;
@@ -12,6 +13,7 @@ import java.util.TimerTask;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -44,7 +46,7 @@ public class Updater extends TimerTask {
 		Arrivals[] arrivals = StationTreinen(time, station);
 		
 		
-		
+//		Iterable<Trein> treinen = this.treinService.findAll();
 		Iterable<Trein> treinen = ontvangTreinen(databaseTreinenUrl);
 		for (Trein treinElement : treinen) {
 			trein = ArrayUtils.add(trein, treinElement);
@@ -203,12 +205,12 @@ public class Updater extends TimerTask {
 		}
 	}
 	
-	private ArrayList<Trein> ontvangTreinen(String url){
+	private Iterable<Trein> ontvangTreinen(String url){
 		// HTTP GET REQUIREMENTS
 		HttpHeaders headers = new HttpHeaders();
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<ArrayList> response = restTemplate.exchange(url,HttpMethod.GET, entity, ArrayList.class);
+		ResponseEntity<Iterable<Trein>> response = restTemplate.exchange(url,HttpMethod.GET, entity, new ParameterizedTypeReference<Iterable<Trein>>(){});
 		return response.getBody();
 	}
 }

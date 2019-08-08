@@ -35,4 +35,5 @@ public class TreinService {
 	public Iterable<Trein> findByOrigin(String origin) {
 		return this.treinRepository.findByOrigin(origin);
 	}
+	
 }
