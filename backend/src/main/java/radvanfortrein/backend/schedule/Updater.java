@@ -1,18 +1,25 @@
 package radvanfortrein.backend.schedule;
 
 import radvanfortrein.backend.model.*;
+import radvanfortrein.backend.repository.TreinRepository;
+import radvanfortrein.backend.service.StationService;
+import radvanfortrein.backend.service.TreinService;
 import radvanfortrein.backend.ConsoleMessages.*;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.TimerTask;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class Updater extends TimerTask {
+	
 	long singleGameID = 1;
 	String myStation = "ASD"; // THE NAME OF THE STATION AS NS KNOWS IT
 	Station station = new Station(myStation); // MAKES A OBJECT OF THE STATION
@@ -34,12 +41,25 @@ public class Updater extends TimerTask {
 	// HANDLES ALL THE FUNCTIONS NEEDED TO GET TRAIN DATA AND SEND IT TO OUR OWN
 	// DATABASE
 	void updateAlleTreinen(String time, String station) {
-		Trein[] trein;
+		Trein[] trein = new Trein[0];
 		// haalt alle treinen van de komende 2 uur van het aangegeven station
 		Arrivals[] arrivals = StationTreinen(time, station);
-		trein = this.station.getTreinen();
+		
+		
+//		Iterable<Trein> treinen = this.treinService.findAll();
+		Iterable<Trein> treinen = ontvangTreinen(databaseTreinenUrl);
+		for (Trein treinElement : treinen) {
+			trein = ArrayUtils.add(trein, treinElement);
+		}
+		
+//		trein = this.station.getTreinen();
 		trein = handelUpdatesEnNieuweTreinen(arrivals, trein);
-		this.station.setTreinen(trein);
+		
+		String[] nieuweTreinen = new String[0];
+		for (Trein treinElement : trein) {
+			nieuweTreinen = ArrayUtils.add(nieuweTreinen, treinElement.getNaam());
+		}
+		this.station.setTreinen(nieuweTreinen);
 	}
 
 	// CONTROLS ALL THE TRAINS IT FOUND FROM THE NS API AND SHOWS IF THEY ARE NEW TO
@@ -183,5 +203,14 @@ public class Updater extends TimerTask {
 				verzenden(teLaat,databaseGameUrl+"/"+singleGameID+"/Resultaat",HttpMethod.PUT);
 			}
 		}
+	}
+	
+	private Iterable<Trein> ontvangTreinen(String url){
+		// HTTP GET REQUIREMENTS
+		HttpHeaders headers = new HttpHeaders();
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<Iterable<Trein>> response = restTemplate.exchange(url,HttpMethod.GET, entity, new ParameterizedTypeReference<Iterable<Trein>>(){});
+		return response.getBody();
 	}
 }
