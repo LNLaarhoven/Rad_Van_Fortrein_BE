@@ -1,21 +1,19 @@
-package radvanfortrein.backend;
+ package radvanfortrein.backend;
 
-import java.util.Scanner;
+import java.util.Timer;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import radvanfortrein.backend.model.Game;
-import radvanfortrein.backend.model.Inzet;
-import radvanfortrein.backend.model.Speler;
-import radvanfortrein.backend.model.Station;
-import radvanfortrein.backend.model.Trein;
+import radvanfortrein.backend.schedule.*;
 
 @SpringBootApplication
 public class BackendApplication {
-
+	
+	static Timer timer = new Timer();
 	public static void main(String[] args) {
 		SpringApplication.run(BackendApplication.class, args);
+		timer.schedule(new Updater(), 0, 1000*60);
 //		Scanner scanner = new Scanner(System.in);
 //
 //		Game game = new Game();
