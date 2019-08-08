@@ -8,4 +8,5 @@ import radvanfortrein.backend.model.Trein;
 @Repository
 public interface TreinRepository extends CrudRepository<Trein, String>{
 
+	Iterable<Trein> findByOrigin(String origin);
 }

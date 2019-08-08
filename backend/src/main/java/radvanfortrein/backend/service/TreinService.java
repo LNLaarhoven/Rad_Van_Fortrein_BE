@@ -31,4 +31,8 @@ public class TreinService {
 	public void deleteById(String naam) {
 		this.treinRepository.deleteById(naam);
 	}
+	
+	public Iterable<Trein> findByOrigin(String origin) {
+		return this.treinRepository.findByOrigin(origin);
+	}
 }
