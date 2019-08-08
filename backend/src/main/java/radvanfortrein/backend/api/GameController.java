@@ -50,6 +50,7 @@ public class GameController {
 		return new ResponseEntity<>(game, game.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 	}
 	
+	
 	@PutMapping(path = "{id}")
 	public ResponseEntity<Game> apiUpdate(
 			@PathVariable("id") long id,
@@ -66,8 +67,29 @@ public class GameController {
 		}
 		return new ResponseEntity<>(
 				gameService.save(game),
-				HttpStatus.OK);
-				
+				HttpStatus.OK);		
+	}
+	
+	@PutMapping(path = "{id}/Resultaat")
+	public ResponseEntity<Integer> apiUpdateResultaat(
+			@PathVariable("id") long id,
+			@RequestBody Integer resultaat) {
+		if (resultaat < 0 || resultaat > 2) {
+			return new ResponseEntity<>(
+					HttpStatus.BAD_REQUEST);
+		}
+		
+		Optional<Game> oldGame = gameService.findById(id);
+		if (!oldGame.isPresent()) {
+			return new ResponseEntity<>(
+					HttpStatus.NOT_FOUND);
+		}
+		Game newGame = oldGame.get();
+		newGame.setResultaat(resultaat);
+		gameService.save(newGame);
+		return new ResponseEntity<>(				
+				resultaat,
+				HttpStatus.OK);		
 	}
 
 	@DeleteMapping (path = "{id}")
