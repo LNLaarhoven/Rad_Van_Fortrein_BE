@@ -36,8 +36,8 @@ public class Game extends Observable {
 	
 	private String station;
 	
-	@OneToMany(cascade={CascadeType.ALL})
-	@JsonIgnoreProperties("game")
+	@OneToMany //(cascade={CascadeType.MERGE})
+	@JsonIgnoreProperties(value = {"game"}, allowSetters = true)
 //	private long[] inzetten;
 	private Set<Inzet> inzetten = new HashSet<>();
 	

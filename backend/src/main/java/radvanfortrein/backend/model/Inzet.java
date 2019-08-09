@@ -21,12 +21,12 @@ public class Inzet implements Observer{
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
-	@ManyToOne (cascade = {CascadeType.MERGE})
-	@JsonIgnoreProperties("inzetten")
+	@ManyToOne //(cascade = {CascadeType.MERGE})
+	@JsonIgnoreProperties(value = {"inzetten"}, allowSetters = true)
 	private Speler speler;
 	
-	@ManyToOne(cascade = {CascadeType.ALL})
-	@JsonIgnoreProperties("inzetten")
+	@ManyToOne //(cascade = {CascadeType.MERGE})
+	@JsonIgnoreProperties(value = {"inzetten"}, allowSetters = true)
 	private Game game;
 	
 	private int inzetBedrag;

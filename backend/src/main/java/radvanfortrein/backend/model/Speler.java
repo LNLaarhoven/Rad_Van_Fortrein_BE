@@ -29,8 +29,8 @@ public class Speler {
 	
 	private int totaalPunten = 500;
 	
-	@OneToMany(cascade = {CascadeType.MERGE})
-	@JsonIgnoreProperties("speler")
+	@OneToMany //(cascade = {CascadeType.MERGE})
+	@JsonIgnoreProperties(value = {"speler"}, allowSetters = true)
 	private Set<Inzet> inzetten = new HashSet<>();
 
 	public Speler() {}
