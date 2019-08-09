@@ -21,8 +21,9 @@ public class Inzet implements Observer{
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
-//	@JsonIgnoreProperties("inzetten")
-	private long speler;
+	@ManyToOne (cascade = {CascadeType.MERGE})
+	@JsonIgnoreProperties("inzetten")
+	private Speler speler;
 	
 	@ManyToOne(cascade = {CascadeType.ALL})
 	@JsonIgnoreProperties("inzetten")
@@ -42,7 +43,7 @@ public class Inzet implements Observer{
 	}
 	
 	public Inzet(Speler speler, Game game, int inzetBedrag, boolean isTeLaat){
-		this.speler = speler.getId();
+		this.speler = speler;
 		this.game = game;
 		this.setInzetBedrag(inzetBedrag);
 		this.inzetTeLaat = isTeLaat;
@@ -71,12 +72,12 @@ public class Inzet implements Observer{
 		this.inzetBedrag = inzetBedrag;
 	}
 	
-	public long getSpeler() {
+	public Speler getSpeler() {
 		return speler;
 	}
 
 
-	public void setSpeler(long speler) {
+	public void setSpeler(Speler speler) {
 		this.speler = speler;
 	}
 
