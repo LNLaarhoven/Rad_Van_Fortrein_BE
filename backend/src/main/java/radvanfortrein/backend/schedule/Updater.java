@@ -16,16 +16,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class Updater extends TimerTask {
-	
+
 	long singleGameID = 1;
-	String myStation = "ASD"; // THE NAME OF THE STATION AS NS KNOWS IT
+	String myStation = "UT"; // THE NAME OF THE STATION AS NS KNOWS IT
 	Station station = new Station(myStation); // MAKES A OBJECT OF THE STATION
 	int maxJourneys = 50; // LISTS THE MAX AMOUNT OF JOURNEYS THE API MAY PULL
 	String databaseTreinenUrl = "http://localhost:8080/api/treinen"; // ADDRESS OF OWN DATABASE
 	String databaseGameUrl = "http://localhost:8080/api/games"; // ADDRESS OF OWN DATABASE
+	String databaseSpelerUrl = "http://localhost:8080/api/spelers"; // ADDRESS OF OWN DATABASE
+	String databaseInzetUrl = "http://localhost:8080/api/inzetten";
 	DebugMessages c = new DebugMessages();
 
 	boolean LIVE = true; // IF TRUE, IT WILL TRY TO CONNECT WITH THE DATABASE ELSE IT WILL SKIP THE
@@ -44,17 +47,16 @@ public class Updater extends TimerTask {
 		Trein[] trein = new Trein[0];
 		// haalt alle treinen van de komende 2 uur van het aangegeven station
 		Arrivals[] arrivals = StationTreinen(time, station);
-		
-		
+
 //		Iterable<Trein> treinen = this.treinService.findAll();
 		Iterable<Trein> treinen = ontvangTreinen(databaseTreinenUrl);
 		for (Trein treinElement : treinen) {
 			trein = ArrayUtils.add(trein, treinElement);
 		}
-		
+
 //		trein = this.station.getTreinen();
 		trein = handelUpdatesEnNieuweTreinen(arrivals, trein);
-		
+
 		String[] nieuweTreinen = new String[0];
 		for (Trein treinElement : trein) {
 			nieuweTreinen = ArrayUtils.add(nieuweTreinen, treinElement.getNaam());
@@ -167,18 +169,24 @@ public class Updater extends TimerTask {
 	// GETS ALL THE TRAINS IN THE COMING 2 HOURS FROM THE NS API (REQUIRES OBJECTS
 	// TO FIT THE INCOMING DATA)
 	private Arrivals[] StationTreinen(String time, String station) {
-		// HTTP GET REQUIREMENTS
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Content-Type", "application/json");
-		headers.set("Ocp-Apim-Subscription-Key", "d5ae16043d844abc9ad1db166ae5145f");
-		HttpEntity<String> entity = new HttpEntity<>(headers);
-		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<ThisStation> response = restTemplate
-				.exchange(
-						"https://gateway.apiportal.ns.nl/public-reisinformatie/api/v2/arrivals?" + time
-								+ "&maxJourneys=" + maxJourneys + "&lang=nl&station=" + station,
-						HttpMethod.GET, entity, ThisStation.class);
-		return response.getBody().getPayload().getArrivals();
+		try {
+			// HTTP GET REQUIREMENTS
+			HttpHeaders headers = new HttpHeaders();
+			headers.set("Content-Type", "application/json");
+			headers.set("Ocp-Apim-Subscription-Key", "d5ae16043d844abc9ad1db166ae5145f");
+			HttpEntity<String> entity = new HttpEntity<>(headers);
+			RestTemplate restTemplate = new RestTemplate();
+			ResponseEntity<ThisStation> response = restTemplate
+					.exchange(
+							"https://gateway.apiportal.ns.nl/public-reisinformatie/api/v2/arrivals?" + time
+									+ "&maxJourneys=" + maxJourneys + "&lang=nl&station=" + station,
+							HttpMethod.GET, entity, ThisStation.class);
+			return response.getBody().getPayload().getArrivals();
+		} catch (HttpServerErrorException e) {
+			System.out.println(
+					"EXCEPTION!: Het was niet mogelijk om de data van de NS binnen te halen. Controleer of je een goeie verbinding hebt(404). Het kan ook aan de API van de NS liggen (503).");
+			return new Arrivals[0];
+		}
 
 	}
 
@@ -200,17 +208,90 @@ public class Updater extends TimerTask {
 				}
 				System.out.println(
 						"De aankomst tijd van " + trein.getNaam() + " is verstreken teLaat=" + trein.getTeLaat());
-				verzenden(teLaat,databaseGameUrl+"/"+singleGameID+"/Resultaat",HttpMethod.PUT);
+				verzenden(teLaat, databaseGameUrl + "/" + singleGameID + "/Resultaat", HttpMethod.PUT);
+				verdeelInzet(trein.getTeLaat());
 			}
 		}
 	}
-	
-	private Iterable<Trein> ontvangTreinen(String url){
+
+	private void verdeelInzet(boolean teLaat) {
 		// HTTP GET REQUIREMENTS
 		HttpHeaders headers = new HttpHeaders();
 		HttpEntity<String> entity = new HttpEntity<>(headers);
 		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<Iterable<Trein>> response = restTemplate.exchange(url,HttpMethod.GET, entity, new ParameterizedTypeReference<Iterable<Trein>>(){});
+		ResponseEntity<Game> response = restTemplate.exchange(databaseGameUrl + "/" + singleGameID, HttpMethod.GET,
+				entity, Game.class);
+		Game currentGame = response.getBody();
+		ArrayList<Integer> optijdPool = new ArrayList<>();
+		ArrayList<Integer> telaatPool = new ArrayList<>();
+		int[] poolTotaal = new int[2];
+		long[] inzetIds = currentGame.getInzetten();
+		ArrayList<Inzet> inzetten = (ArrayList<Inzet>) ontvangInzetten(databaseInzetUrl);
+
+		// Het wordt duidelijk hoeveel er wordt ingezet voor en tegen de aankomst van de
+		// trein.
+		for (int i = 0; i < inzetten.size(); i++) {
+			System.out.println(i);
+			if (inzetten.get(i).isInzetTeLaat()) {
+				telaatPool.add(inzetten.get(i).getInzetBedrag());
+			} else {
+				optijdPool.add(inzetten.get(i).getInzetBedrag());
+			}
+		}
+
+		// Voeg alle punten samen tot 1 geheel.
+		for (int i = 0; i < telaatPool.size(); i++) {
+			poolTotaal[0] += telaatPool.get(i);
+		}
+		for (int i = 0; i < optijdPool.size(); i++) {
+			poolTotaal[1] += optijdPool.get(i);
+		}
+		
+		// Totaal aantal punten is duidelijk nu kan de winst verdeeld worden over de
+		// spelers.
+		for (int i = 0; i < inzetten.size(); i++) {
+			int punten = 0;
+			boolean In = inzetten.get(i).isInzetTeLaat();
+			if (In == teLaat) {
+				// krijg het percentage van jouw inzet in de pool van de andere pool
+				if (poolTotaal[b(In)] > 0 && inzetten.get(i).getInzetBedrag() > 0) {
+					punten = (int) (poolTotaal[b(!In)] / (double)(inzetten.get(i).getInzetBedrag() / (poolTotaal[b(In)])));
+				}
+			} else {
+				if (poolTotaal[b(!In)] > 0) {
+					punten = -inzetten.get(i).getInzetBedrag();
+				}
+			}
+			System.out.println("Speler " + inzetten.get(i).getSpeler() + " krijgt " + punten + " punten.");
+			verzenden(inzetten.get(i).getSpeler(), databaseSpelerUrl + "/" + inzetten.get(i).getSpeler() + "/" + punten,
+					HttpMethod.PUT);
+		}
+	}
+
+	private int b(boolean bool) {
+		// pak aan java
+		return bool ? 1 : 0;
+	}
+
+	private Iterable<Inzet> ontvangInzetten(String url) {
+		// HTTP GET REQUIREMENTS
+		HttpHeaders headers = new HttpHeaders();
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<Iterable<Inzet>> response = restTemplate.exchange(url, HttpMethod.GET, entity,
+				new ParameterizedTypeReference<Iterable<Inzet>>() {
+				});
+		return response.getBody();
+	}
+
+	private Iterable<Trein> ontvangTreinen(String url) {
+		// HTTP GET REQUIREMENTS
+		HttpHeaders headers = new HttpHeaders();
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<Iterable<Trein>> response = restTemplate.exchange(url, HttpMethod.GET, entity,
+				new ParameterizedTypeReference<Iterable<Trein>>() {
+				});
 		return response.getBody();
 	}
 }
