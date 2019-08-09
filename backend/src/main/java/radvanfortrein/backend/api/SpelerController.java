@@ -76,6 +76,28 @@ public class SpelerController {
 				HttpStatus.OK);
 				
 	}
+	
+	@PutMapping(path = "{id}/{punten}")
+	public ResponseEntity<Speler> apiUpdate(
+			@PathVariable("id") long id,
+			@PathVariable("punten") int punten) {
+	
+		Optional<Speler> oldSpeler = spelerService.findById(id);
+		Speler speler;
+		if (!oldSpeler.isPresent()) {
+			return new ResponseEntity<>(
+					HttpStatus.NOT_FOUND);
+		} else {
+			speler = oldSpeler.get();
+			int totaalPunten = speler.getTotaalPunten() + punten;
+			speler.setTotaalPunten(totaalPunten);
+			
+		}
+		return new ResponseEntity<>(
+				spelerService.save(speler),
+				HttpStatus.OK);
+				
+	}
 
 	@DeleteMapping (path = "{id}")
 	public ResponseEntity<Speler> apiDeleteById(@PathVariable long id) {
