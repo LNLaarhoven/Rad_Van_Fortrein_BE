@@ -61,6 +61,7 @@ public class InzetController {
 //			spelerService.save(speler);
 		}
 		inzet.getGame().addInzet(inzet);
+		
 		inzet.getSpeler().addInzet(inzet);
 		this.inzetService.save(inzet);
 		this.gameService.save(inzet.getGame());

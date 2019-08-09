@@ -29,15 +29,15 @@ public class Game extends Observable {
 	static final int RESULTAAT_TREIN_OP_TIJD = 2;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+	//@GeneratedValue(strategy = GenerationType.AUTO)
+	private long id = 999;
 	
 	private String trein;
 	
 	private String station;
 	
-	@OneToMany(cascade={CascadeType.ALL})
-	@JsonIgnoreProperties("game")
+	@OneToMany //(cascade={CascadeType.MERGE})
+	@JsonIgnoreProperties(value = {"game"}, allowSetters = true)
 //	private long[] inzetten;
 	private Set<Inzet> inzetten = new HashSet<>();
 	
