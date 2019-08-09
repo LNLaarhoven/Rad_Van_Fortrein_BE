@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -28,9 +29,9 @@ public class Speler {
 	
 	private int totaalPunten = 50;
 	
-//	@JsonIgnoreProperties("speler")
-//	private Set<Inzet> inzetten = new HashSet<>();
-	private long[] inzetten;
+	@OneToMany(cascade = {CascadeType.MERGE})
+	@JsonIgnoreProperties("speler")
+	private Set<Inzet> inzetten = new HashSet<>();
 
 	public Speler() {}
 	
@@ -50,11 +51,11 @@ public class Speler {
 		this.naam = naam;
 	}
 
-	public long[] getInzetten() {
+	public Set<Inzet> getInzetten() {
 		return inzetten;
 	}
 
-	public void setInzetten(long[] inzetten) {
+	public void setInzetten(Set<Inzet> inzetten) {
 		this.inzetten = inzetten;
 	}
 
@@ -67,7 +68,6 @@ public class Speler {
 	}
 	
 	public boolean addInzet(Inzet inzet) {
-		this.inzetten = ArrayUtils.add(this.inzetten, inzet.getId());
-		return true;
+		return this.inzetten.add(inzet);
 	}
 }
