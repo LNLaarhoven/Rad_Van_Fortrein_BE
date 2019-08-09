@@ -48,36 +48,12 @@ public class GameService {
 	
 	@PostConstruct 
 	void initGameDatabase() {
-		/*if (gameRepository.count()!=0) return;
+		if (gameRepository.count()!=0) return;
 		
-		Trein gameTrein = treinService.save(new Trein("eerste trein"));
-		Trein gameTrein2 = treinService.save(new Trein("treede trein"));
+		Game game = gameRepository.save(new Game());
 		
-		Station gameStation = stationService.save(new Station("ZL", "Zwolle"));
-		Station gameStation2 = stationService.save(new Station("BGN", "Bergen Op Zoom"));
+		Speler gameSpeler = spelerService.save(new Speler("Barry"));
 		
-		Game game = gameRepository.save(new Game(gameTrein, gameStation));
-		Game game2 = gameRepository.save(new Game(gameTrein2, gameStation2));
-		
-		Speler gameSpeler = spelerService.save(new Speler("Frits"));
-		Speler gameSpeler2 = spelerService.save(new Speler("Piet"));
-		Speler gameSpeler3 = spelerService.save(new Speler("Kees"));
-		Speler gameSpeler4 = spelerService.save(new Speler("Jan"));
-		
-		Inzet gameInzet = inzetService.save(new Inzet(gameSpeler, game, 5, false));
-		Inzet gameInzet2 = inzetService.save(new Inzet(gameSpeler, game2, 10, false));
-		Inzet gameInzet3 = inzetService.save(new Inzet(gameSpeler2, game, 5, true));
-		Inzet gameInzet4 = inzetService.save(new Inzet(gameSpeler2, game2, 5, true));
-		Inzet gameInzet5 = inzetService.save(new Inzet(gameSpeler3, game, 5, false));
-		Inzet gameInzet6 = inzetService.save(new Inzet(gameSpeler3, game2, 10, false));
-		Inzet gameInzet7 = inzetService.save(new Inzet(gameSpeler4, game, 5, true));
-		Inzet gameInzet8 = inzetService.save(new Inzet(gameSpeler4, game2, 5, true));
-		
-		spelerService.save(gameSpeler);
-		spelerService.save(gameSpeler2);
-		spelerService.save(gameSpeler3);
-		spelerService.save(gameSpeler4);
-		gameRepository.save(game);
-		gameRepository.save(game2);*/
+		Station gameStation = stationService.save(new Station("Amsterdam Centraal", "ASD"));
 	}
 }

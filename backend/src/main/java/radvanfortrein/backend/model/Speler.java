@@ -22,12 +22,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Speler {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
+	//@GeneratedValue(strategy = GenerationType.AUTO)
+	private long id = 998;
 	
 	private String naam;
 	
-	private int totaalPunten = 50;
+	private int totaalPunten = 500;
 	
 	@OneToMany(cascade = {CascadeType.MERGE})
 	@JsonIgnoreProperties("speler")
