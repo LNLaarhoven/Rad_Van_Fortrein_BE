@@ -3,6 +3,7 @@ package radvanfortrein.backend.model;
 import java.util.Observable;
 import java.util.Observer;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,15 +21,19 @@ public class Inzet implements Observer{
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
-//	@JsonIgnoreProperties("inzetten")
-	private long speler;
+	@ManyToOne //(cascade = {CascadeType.MERGE})
+	@JsonIgnoreProperties(value = {"inzetten"}, allowSetters = true)
+	private Speler speler;
 	
-//	@JsonIgnoreProperties("inzetten")
-	private long game;
+	@ManyToOne //(cascade = {CascadeType.MERGE})
+	@JsonIgnoreProperties(value = {"inzetten"}, allowSetters = true)
+	private Game game;
 	
 	private int inzetBedrag;
 	
 	private boolean inzetTeLaat;
+	
+	private int teWinnenBedrag;
 
 	public Inzet() {
 	}
@@ -38,8 +43,8 @@ public class Inzet implements Observer{
 	}
 	
 	public Inzet(Speler speler, Game game, int inzetBedrag, boolean isTeLaat){
-		this.speler = speler.getId();
-		this.game = game.getId();
+		this.speler = speler;
+		this.game = game;
 		this.setInzetBedrag(inzetBedrag);
 		this.inzetTeLaat = isTeLaat;
 		
@@ -67,25 +72,32 @@ public class Inzet implements Observer{
 		this.inzetBedrag = inzetBedrag;
 	}
 	
-	public long getSpeler() {
+	public Speler getSpeler() {
 		return speler;
 	}
 
 
-	public void setSpeler(long speler) {
+	public void setSpeler(Speler speler) {
 		this.speler = speler;
 	}
 
 
-	public long getGame() {
-		return game;
+	public Game getGame() {
+		return this.game;
 	}
 
 
-	public void setGame(long game) {
+	public void setGame(Game game) {
 		this.game = game;
 	}
 	
+	public int getTeWinnenBedrag() {
+		return teWinnenBedrag;
+	}
+
+	public void setTeWinnenBedrag(int teWinnenBedrag) {
+		this.teWinnenBedrag = teWinnenBedrag;
+	}
 	
 	@Override
 	public void update(Observable arg0, Object arg1) {

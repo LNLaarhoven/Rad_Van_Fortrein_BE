@@ -18,8 +18,9 @@ public class Station {
 
 	}
 
-	public Station(String naam) {
+	public Station(String naam, String code) {
 		this.naam = naam;
+		this.code = code;
 	}
 	
 	public String getNaam() {

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import radvanfortrein.backend.model.Inzet;
 import radvanfortrein.backend.model.Speler;
+import radvanfortrein.backend.service.GameService;
 import radvanfortrein.backend.service.InzetService;
 import radvanfortrein.backend.service.SpelerService;
 
@@ -35,16 +36,20 @@ public class InzetController {
 	
 	@Autowired
 	SpelerService spelerService;
+	
+	@Autowired
+	GameService gameService;
 
 	@PostMapping
 	public ResponseEntity<Inzet> apiCreate(@RequestBody Inzet inzet) {
-		Optional<Speler> mogelijkeSpeler = this.spelerService.findById(0);
-		Speler speler;
-		if (mogelijkeSpeler.isPresent()) {
-			speler = mogelijkeSpeler.get();
-		} else {
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		}
+//		Optional<Speler> mogelijkeSpeler = this.spelerService.findById(1);
+//		System.out.println("Speler id is: " + inzet.getSpeler().getId());
+		Speler speler = inzet.getSpeler();
+//		if (mogelijkeSpeler.isPresent()) {
+//			speler = mogelijkeSpeler.get();
+//		} else {
+//			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//		}
 		if (inzet.getId() != 0) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
@@ -53,8 +58,14 @@ public class InzetController {
 		} else {
 			/* needs testing */
 			speler.setTotaalPunten(speler.getTotaalPunten() - inzet.getInzetBedrag());
-			spelerService.save(speler);
+//			spelerService.save(speler);
 		}
+		inzet.getGame().addInzet(inzet);
+		
+		inzet.getSpeler().addInzet(inzet);
+		this.inzetService.save(inzet);
+		this.gameService.save(inzet.getGame());
+		this.spelerService.save(inzet.getSpeler());
 		return new ResponseEntity<> (inzetService.save(inzet), HttpStatus.OK);
 	}
 

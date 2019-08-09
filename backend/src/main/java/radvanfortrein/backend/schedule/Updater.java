@@ -20,10 +20,9 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 public class Updater extends TimerTask {
-
-	long singleGameID = 1;
+	long singleGameID = 999;
 	String myStation = "ASD"; // THE NAME OF THE STATION AS NS KNOWS IT
-	Station station = new Station(myStation); // MAKES A OBJECT OF THE STATION
+	Station station = new Station("Amsterdam Centraal",myStation); // MAKES A OBJECT OF THE STATION
 	int maxJourneys = 50; // LISTS THE MAX AMOUNT OF JOURNEYS THE API MAY PULL
 	String databaseTreinenUrl = "http://localhost:8080/api/treinen"; // ADDRESS OF OWN DATABASE
 	String databaseGameUrl = "http://localhost:8080/api/games"; // ADDRESS OF OWN DATABASE
