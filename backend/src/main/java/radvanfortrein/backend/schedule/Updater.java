@@ -223,7 +223,6 @@ public class Updater extends TimerTask {
 			ArrayList<Integer> optijdPool = new ArrayList<>();
 			ArrayList<Integer> telaatPool = new ArrayList<>();
 			int[] poolTotaal = new int[2];
-			long[] inzetIds = currentGame.getInzetten();
 			ArrayList<Inzet> inzetten = (ArrayList<Inzet>) ontvangInzetten(databaseInzetUrl);
 
 			// Het wordt duidelijk hoeveel er wordt ingezet voor en tegen de aankomst van de

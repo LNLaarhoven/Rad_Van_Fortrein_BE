@@ -46,6 +46,10 @@ public class GameService {
 		this.gameRepository.deleteById(id);
 	}
 	
+	public Optional<Game> findByTrein(String trein) {
+		return this.gameRepository.findByTrein(trein);
+	}
+	
 	@PostConstruct 
 	void initGameDatabase() {
 		if (gameRepository.count()!=0) return;
