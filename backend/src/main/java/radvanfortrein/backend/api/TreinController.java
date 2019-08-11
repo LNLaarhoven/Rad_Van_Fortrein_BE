@@ -45,7 +45,7 @@ public class TreinController {
 		Iterable<Trein> trein = treinService.findAll();
 		ArrayList<Trein> treinenNaNu = new ArrayList<>();
 		for (Trein t : trein) {
-			if (LocalDateTime.now().isBefore(LocalDateTime.parse(t.getWerkelijkeAankomsten()[0]))) {
+			if (LocalDateTime.now().isBefore(LocalDateTime.parse(t.getGeplandeAankomsten()[0]))) {
 				treinenNaNu.add(t);
 			} 
 		}
