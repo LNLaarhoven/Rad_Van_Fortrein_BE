@@ -1,9 +1,6 @@
 package radvanfortrein.backend.schedule;
 
 import radvanfortrein.backend.model.*;
-import radvanfortrein.backend.repository.TreinRepository;
-import radvanfortrein.backend.service.StationService;
-import radvanfortrein.backend.service.TreinService;
 import radvanfortrein.backend.ConsoleMessages.*;
 
 import java.time.LocalDateTime;
@@ -12,17 +9,17 @@ import java.util.ArrayList;
 import java.util.TimerTask;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 public class Updater extends TimerTask {
 	long singleGameID = 999;
 	String myStation = "ASD"; // THE NAME OF THE STATION AS NS KNOWS IT
-	Station station = new Station("Amsterdam Centraal",myStation); // MAKES A OBJECT OF THE STATION
+	Station station = new Station("Amsterdam Centraal", myStation); // MAKES A OBJECT OF THE STATION
 	int maxJourneys = 50; // LISTS THE MAX AMOUNT OF JOURNEYS THE API MAY PULL
 	String databaseTreinenUrl = "http://localhost:8080/api/treinen"; // ADDRESS OF OWN DATABASE
 	String databaseGameUrl = "http://localhost:8080/api/games"; // ADDRESS OF OWN DATABASE
@@ -35,9 +32,7 @@ public class Updater extends TimerTask {
 
 	// RUNS THIS FUNCTION WITH A SCEDULED TIMERTASK, ACTIVATION EVERY *** MILLIS
 	public void run() {
-		if (true) {
-			updateAlleTreinen(LocalDateTime.now().toString(), myStation);
-		}
+		updateAlleTreinen(LocalDateTime.now().toString(), myStation);
 	}
 
 	// HANDLES ALL THE FUNCTIONS NEEDED TO GET TRAIN DATA AND SEND IT TO OUR OWN
@@ -45,15 +40,20 @@ public class Updater extends TimerTask {
 	void updateAlleTreinen(String time, String station) {
 		Trein[] trein = new Trein[0];
 		// haalt alle treinen van de komende 2 uur van het aangegeven station
-		Arrivals[] arrivals = StationTreinen(time, station);
+		Arrivals[] arrivals = new Arrivals[0];
+		try {
+			arrivals = StationTreinen(time, station);
+		} catch (ResourceAccessException e) {
+			System.out
+					.println("EXCEPTION: ER IS GEEN INTERNET!!! Om NS treinen te downloaden moet je internet hebben!");
 
-//		Iterable<Trein> treinen = this.treinService.findAll();
-		Iterable<Trein> treinen = ontvangTreinen(databaseTreinenUrl);
+		}
+		ArrayList<Trein> treinen = ontvangTrein(databaseTreinenUrl);
 		for (Trein treinElement : treinen) {
-			trein = ArrayUtils.add(trein, treinElement);
+			System.out.println("GET: "+treinElement.getNaam()+" "+treinElement.getOrigin()+" from the database");
+			 trein = ArrayUtils.add(trein, treinElement);
 		}
 
-//		trein = this.station.getTreinen();
 		trein = handelUpdatesEnNieuweTreinen(arrivals, trein);
 
 		String[] nieuweTreinen = new String[0];
@@ -121,8 +121,14 @@ public class Updater extends TimerTask {
 			System.out.println("No new updates");
 		}
 
-		for (int i = 0; i < trein.length; i++) {
-			controlIfTimeIsPassed(trein[i]);
+		ArrayList<Game> games = ontvangGame(databaseGameUrl);
+
+		for (Game lopendeGames : games) {
+			for(Trein treinen: trein) {
+				if(treinen.getNaam().equals(lopendeGames.getTrein())) {
+				controlIfTimeIsPassed(treinen, lopendeGames.getId());
+				}
+			}
 		}
 
 		System.out.println("------");
@@ -187,7 +193,7 @@ public class Updater extends TimerTask {
 
 	}
 
-	private void controlIfTimeIsPassed(Trein trein) {
+	private void controlIfTimeIsPassed(Trein trein, long id) {
 		int passedTimeLimit = 2;
 		LocalDateTime nu = LocalDateTime.now();
 		LocalDateTime treinTijd = LocalDateTime.parse(trein.getGeplandeAankomsten()[0]);
@@ -205,7 +211,7 @@ public class Updater extends TimerTask {
 				}
 				System.out.println(
 						"De aankomst tijd van " + trein.getNaam() + " is verstreken teLaat=" + trein.getTeLaat());
-				verzenden(teLaat, databaseGameUrl + "/" + singleGameID + "/Resultaat", HttpMethod.PUT);
+				verzenden(teLaat, databaseGameUrl + "/" + id + "/Resultaat", HttpMethod.PUT);
 				verdeelInzet(trein.getTeLaat());
 			}
 		}
@@ -214,17 +220,10 @@ public class Updater extends TimerTask {
 	private void verdeelInzet(boolean teLaat) {
 		if (LIVE) {
 			// HTTP GET REQUIREMENTS
-			HttpHeaders headers = new HttpHeaders();
-			HttpEntity<String> entity = new HttpEntity<>(headers);
-			RestTemplate restTemplate = new RestTemplate();
-			ResponseEntity<Game> response = restTemplate.exchange(databaseGameUrl + "/" + singleGameID, HttpMethod.GET,
-					entity, Game.class);
-			Game currentGame = response.getBody();
 			ArrayList<Integer> optijdPool = new ArrayList<>();
 			ArrayList<Integer> telaatPool = new ArrayList<>();
 			int[] poolTotaal = new int[2];
-			long[] inzetIds = currentGame.getInzetten();
-			ArrayList<Inzet> inzetten = (ArrayList<Inzet>) ontvangInzetten(databaseInzetUrl);
+			ArrayList<Inzet> inzetten = ontvangInzet(databaseInzetUrl);
 
 			// Het wordt duidelijk hoeveel er wordt ingezet voor en tegen de aankomst van de
 			// trein.
@@ -255,10 +254,18 @@ public class Updater extends TimerTask {
 					if (poolTotaal[b(In)] > 0 && inzetten.get(i).getInzetBedrag() > 0) {
 						punten = (int) ((double) poolTotaal[b(!In)]
 								* (double) (inzetten.get(i).getInzetBedrag() / (double) (poolTotaal[b(In)])));
+					} else {
+						if (inzetten.size() == 1) {
+							punten = inzetten.get(i).getInzetBedrag() * 2; // verdubbelt als er maar 1 speler is
+						}
 					}
 				} else {
 					if (poolTotaal[b(!In)] > 0) {
 						punten = -inzetten.get(i).getInzetBedrag();
+					} else {
+						if (inzetten.size() == 1) {
+							punten = inzetten.get(i).getInzetBedrag() / 2; // halveerd als er maar 1 speler is
+						}
 					}
 				}
 				System.out.println("Speler " + inzetten.get(i).getSpeler() + " krijgt " + punten + " punten.");
@@ -273,25 +280,47 @@ public class Updater extends TimerTask {
 		return bool ? 1 : 0;
 	}
 
-	private Iterable<Inzet> ontvangInzetten(String url) {
-			// HTTP GET REQUIREMENTS
-			HttpHeaders headers = new HttpHeaders();
-			HttpEntity<String> entity = new HttpEntity<>(headers);
-			RestTemplate restTemplate = new RestTemplate();
-			ResponseEntity<Iterable<Inzet>> response = restTemplate.exchange(url, HttpMethod.GET, entity,
-					new ParameterizedTypeReference<Iterable<Inzet>>() {
-					});
-			return response.getBody();
+	private ArrayList<Trein> ontvangTrein(String url) {
+		// HTTP GET REQUIREMENTS
+		HttpHeaders headers = new HttpHeaders();
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<ArrayList<Trein>> response = restTemplate.exchange(url, HttpMethod.GET, entity,
+				new ParameterizedTypeReference<ArrayList<Trein>>() {
+				});
+		return response.getBody();
 	}
 
-	private Iterable<Trein> ontvangTreinen(String url) {
-			// HTTP GET REQUIREMENTS
-			HttpHeaders headers = new HttpHeaders();
-			HttpEntity<String> entity = new HttpEntity<>(headers);
-			RestTemplate restTemplate = new RestTemplate();
-			ResponseEntity<Iterable<Trein>> response = restTemplate.exchange(url, HttpMethod.GET, entity,
-					new ParameterizedTypeReference<Iterable<Trein>>() {
-					});
-			return response.getBody();
+	private ArrayList<Game> ontvangGame(String url) {
+		// HTTP GET REQUIREMENTS
+		HttpHeaders headers = new HttpHeaders();
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<ArrayList<Game>> response = restTemplate.exchange(url, HttpMethod.GET, entity,
+				new ParameterizedTypeReference<ArrayList<Game>>() {
+				});
+		return response.getBody();
 	}
+
+	private ArrayList<Inzet> ontvangInzet(String url) {
+		// HTTP GET REQUIREMENTS
+		HttpHeaders headers = new HttpHeaders();
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<ArrayList<Inzet>> response = restTemplate.exchange(url, HttpMethod.GET, entity,
+				new ParameterizedTypeReference<ArrayList<Inzet>>() {
+				});
+		return response.getBody();
+	}
+
+	/*private <T> ArrayList<T> ontvang(Class<T> type, String url) {
+		// HTTP GET REQUIREMENTS
+		HttpHeaders headers = new HttpHeaders();
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<ArrayList<T>> response = restTemplate.exchange(url, HttpMethod.GET, entity,
+				new ParameterizedTypeReference<ArrayList<T>>() {
+				});
+		return response.getBody();
+	}*/
 }
