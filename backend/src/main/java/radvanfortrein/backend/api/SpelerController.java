@@ -33,15 +33,8 @@ public class SpelerController {
 
 	@PostMapping
 	public ResponseEntity<Speler> apiCreate(@RequestBody Speler speler) {
-		if (speler.getId() != 0 && speler.getId() != 1) {						// changed for testing
+		if (speler.getId() != 0) {						// changed for testing
 			return new ResponseEntity<> (HttpStatus.CONFLICT);
-		} else if (speler.getId() == 1) {
-			Optional<Speler> spelerDB = this.spelerService.findById(1);
-			if (spelerDB.isPresent()) {
-				return new ResponseEntity<> (speler, HttpStatus.OK);
-			} else {
-				return new ResponseEntity<> (this.spelerService.save(speler), HttpStatus.OK);
-			}
 		}
 		return new ResponseEntity<> (spelerService.save(speler), HttpStatus.OK);
 	}
