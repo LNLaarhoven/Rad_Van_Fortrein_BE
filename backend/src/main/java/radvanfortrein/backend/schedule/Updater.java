@@ -268,9 +268,9 @@ public class Updater extends TimerTask {
 						}
 					}
 				}
-				System.out.println("Speler " + inzetten.get(i).getSpeler() + " krijgt " + punten + " punten.");
+				System.out.println("Speler " + inzetten.get(i).getSpeler().getId() + " krijgt " + punten + " punten.");
 				verzenden(inzetten.get(i).getSpeler(),
-						databaseSpelerUrl + "/" + inzetten.get(i).getSpeler() + "/" + punten, HttpMethod.PUT);
+						databaseSpelerUrl + "/" + inzetten.get(i).getSpeler().getId() + "/" + punten, HttpMethod.PUT);
 			}
 		}
 	}
