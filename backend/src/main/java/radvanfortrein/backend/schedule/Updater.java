@@ -50,8 +50,9 @@ public class Updater extends TimerTask {
 		}
 		ArrayList<Trein> treinen = ontvangTrein(databaseTreinenUrl);
 		for (Trein treinElement : treinen) {
-			System.out.println("GET: "+treinElement.getNaam()+" "+treinElement.getOrigin()+" from the database");
-			 trein = ArrayUtils.add(trein, treinElement);
+			System.out
+					.println("GET: " + treinElement.getNaam() + " " + treinElement.getOrigin() + " from the database");
+			trein = ArrayUtils.add(trein, treinElement);
 		}
 
 		trein = handelUpdatesEnNieuweTreinen(arrivals, trein);
@@ -124,9 +125,9 @@ public class Updater extends TimerTask {
 		ArrayList<Game> games = ontvangGame(databaseGameUrl);
 
 		for (Game lopendeGames : games) {
-			for(Trein treinen: trein) {
-				if(treinen.getNaam().equals(lopendeGames.getTrein())) {
-				controlIfTimeIsPassed(treinen, lopendeGames.getId());
+			for (Trein treinen : trein) {
+				if (treinen.getNaam().equals(lopendeGames.getTrein())) {
+					controlIfTimeIsPassed(treinen, lopendeGames.getId());
 				}
 			}
 		}
@@ -194,45 +195,47 @@ public class Updater extends TimerTask {
 	}
 
 	private void controlIfTimeIsPassed(Trein trein, long id) {
-		int passedTimeLimit = 2;
 		LocalDateTime nu = LocalDateTime.now();
 		LocalDateTime treinTijd = LocalDateTime.parse(trein.getGeplandeAankomsten()[0]);
-		if (treinTijd.isBefore(nu)) {
-			// De trein zijn geplande tijd is verstreken
+		System.out.println("Tijd tussen nu en geplandeAankomstTijd: " + ChronoUnit.MINUTES.between(treinTijd, nu));
+		// De trein zijn geplande tijd is verstreken
 
-			// Als de de tijd tussen geplande tijd en nu minder is dan passedTimeLimit
-			// minuten dan mag hij dit versturen naar de database
-			if (ChronoUnit.MINUTES.between(treinTijd, nu) < passedTimeLimit) {
-				Integer teLaat;
-				if (trein.getTeLaat()) {
-					teLaat = 1;
-				} else {
-					teLaat = 2;
-				}
-				System.out.println(
-						"De aankomst tijd van " + trein.getNaam() + " is verstreken teLaat=" + trein.getTeLaat());
-				verzenden(teLaat, databaseGameUrl + "/" + id + "/Resultaat", HttpMethod.PUT);
-				verdeelInzet(trein.getTeLaat());
+		// Als de de tijd tussen geplande tijd en nu minder is dan passedTimeLimit
+		// minuten dan mag hij dit versturen naar de database
+		if (ChronoUnit.MINUTES.between(treinTijd, nu) == 0) {
+			Integer teLaat;
+			if (trein.getTeLaat()) {
+				teLaat = 1;
+			} else {
+				teLaat = 2;
 			}
+			System.out.println("De aankomst tijd van " + trein.getNaam() + " is verstreken, de trein is "
+					+ (trein.getTeLaat() ? "te laat!" : "op tijd!"));
+			verzenden(teLaat, databaseGameUrl + "/" + id + "/Resultaat", HttpMethod.PUT);
+			verdeelInzet(trein.getTeLaat(), id);
 		}
 	}
 
-	private void verdeelInzet(boolean teLaat) {
+	private void verdeelInzet(boolean teLaat, long id) {
 		if (LIVE) {
 			// HTTP GET REQUIREMENTS
 			ArrayList<Integer> optijdPool = new ArrayList<>();
 			ArrayList<Integer> telaatPool = new ArrayList<>();
 			int[] poolTotaal = new int[2];
 			ArrayList<Inzet> inzetten = ontvangInzet(databaseInzetUrl);
+			int aantalInzettenInGame = 0;
 
 			// Het wordt duidelijk hoeveel er wordt ingezet voor en tegen de aankomst van de
 			// trein.
 			for (int i = 0; i < inzetten.size(); i++) {
-				System.out.println(i);
-				if (inzetten.get(i).isInzetTeLaat()) {
-					telaatPool.add(inzetten.get(i).getInzetBedrag());
-				} else {
-					optijdPool.add(inzetten.get(i).getInzetBedrag());
+				if (inzetten.get(i).getGame().getId() == id) {
+					aantalInzettenInGame++;
+					System.out.println(i);
+					if (inzetten.get(i).isInzetTeLaat()) {
+						telaatPool.add(inzetten.get(i).getInzetBedrag());
+					} else {
+						optijdPool.add(inzetten.get(i).getInzetBedrag());
+					}
 				}
 			}
 
@@ -247,30 +250,37 @@ public class Updater extends TimerTask {
 			// Totaal aantal punten is duidelijk nu kan de winst verdeeld worden over de
 			// spelers.
 			for (int i = 0; i < inzetten.size(); i++) {
-				int punten = 0;
-				boolean In = inzetten.get(i).isInzetTeLaat();
-				if (In == teLaat) {
-					// krijg het percentage van jouw inzet in de pool van de andere pool
-					if (poolTotaal[b(In)] > 0 && inzetten.get(i).getInzetBedrag() > 0) {
-						punten = (int) ((double) poolTotaal[b(!In)]
-								* (double) (inzetten.get(i).getInzetBedrag() / (double) (poolTotaal[b(In)])));
+				if (inzetten.get(i).getGame().getId() == id) {
+					int punten = 0;
+					boolean In = inzetten.get(i).isInzetTeLaat();
+					System.out.println("Gelezen speler inzet:"+In+", teLaat boolean:"+teLaat+", speler inzet bedrag is:"+inzetten.get(i).getInzetBedrag() );
+					if (In == teLaat) {
+						System.out.println("Goed!");
+						// krijg het percentage van jouw inzet in de pool van de andere pool
+						if (poolTotaal[b(In)] > 0 && inzetten.get(i).getInzetBedrag() > 0) {
+							punten = (int) ((double) poolTotaal[b(!In)]
+									* (double) (inzetten.get(i).getInzetBedrag() / (double) (poolTotaal[b(In)])));
+						} else {
+							if (aantalInzettenInGame == 1) {
+								punten = inzetten.get(i).getInzetBedrag() * 2; // verdubbelt als er maar 1 speler is
+							}
+						}
 					} else {
-						if (inzetten.size() == 1) {
-							punten = inzetten.get(i).getInzetBedrag() * 2; // verdubbelt als er maar 1 speler is
+						System.out.println("Fout!");
+						if (poolTotaal[b(!In)] > 0) {
+							punten = -inzetten.get(i).getInzetBedrag();
+						} else {
+							if (aantalInzettenInGame == 1) {
+								punten = 0;//inzetten.get(i).getInzetBedrag() / 2; // halveerd als er maar 1 speler is
+							}
 						}
 					}
-				} else {
-					if (poolTotaal[b(!In)] > 0) {
-						punten = -inzetten.get(i).getInzetBedrag();
-					} else {
-						if (inzetten.size() == 1) {
-							punten = inzetten.get(i).getInzetBedrag() / 2; // halveerd als er maar 1 speler is
-						}
-					}
+					System.out.println(
+							"Speler " + inzetten.get(i).getSpeler().getId() + " krijgt " + punten + " punten.");
+					verzenden(inzetten.get(i).getSpeler(),
+							databaseSpelerUrl + "/" + inzetten.get(i).getSpeler().getId() + "/" + punten,
+							HttpMethod.PUT);
 				}
-				System.out.println("Speler " + inzetten.get(i).getSpeler().getId() + " krijgt " + punten + " punten.");
-				verzenden(inzetten.get(i).getSpeler(),
-						databaseSpelerUrl + "/" + inzetten.get(i).getSpeler().getId() + "/" + punten, HttpMethod.PUT);
 			}
 		}
 	}
@@ -313,14 +323,12 @@ public class Updater extends TimerTask {
 		return response.getBody();
 	}
 
-	/*private <T> ArrayList<T> ontvang(Class<T> type, String url) {
-		// HTTP GET REQUIREMENTS
-		HttpHeaders headers = new HttpHeaders();
-		HttpEntity<String> entity = new HttpEntity<>(headers);
-		RestTemplate restTemplate = new RestTemplate();
-		ResponseEntity<ArrayList<T>> response = restTemplate.exchange(url, HttpMethod.GET, entity,
-				new ParameterizedTypeReference<ArrayList<T>>() {
-				});
-		return response.getBody();
-	}*/
+	/*
+	 * private <T> ArrayList<T> ontvang(Class<T> type, String url) { // HTTP GET
+	 * REQUIREMENTS HttpHeaders headers = new HttpHeaders(); HttpEntity<String>
+	 * entity = new HttpEntity<>(headers); RestTemplate restTemplate = new
+	 * RestTemplate(); ResponseEntity<ArrayList<T>> response =
+	 * restTemplate.exchange(url, HttpMethod.GET, entity, new
+	 * ParameterizedTypeReference<ArrayList<T>>() { }); return response.getBody(); }
+	 */
 }
