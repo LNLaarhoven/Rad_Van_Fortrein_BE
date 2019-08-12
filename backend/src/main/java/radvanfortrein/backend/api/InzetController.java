@@ -42,27 +42,18 @@ public class InzetController {
 
 	@PostMapping
 	public ResponseEntity<Inzet> apiCreate(@RequestBody Inzet inzet) {
-//		Optional<Speler> mogelijkeSpeler = this.spelerService.findById(1);
-//		System.out.println("Speler id is: " + inzet.getSpeler().getId());
 		Speler speler = inzet.getSpeler();
-//		if (mogelijkeSpeler.isPresent()) {
-//			speler = mogelijkeSpeler.get();
-//		} else {
-//			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//		}
 		if (inzet.getId() != 0) {
 			return new ResponseEntity<>(HttpStatus.CONFLICT);
 		}
 		if (speler == null || inzet.getInzetBedrag() > speler.getTotaalPunten() || inzet.getInzetBedrag() < 1) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		} else {
-			/* needs testing */
 			speler.setTotaalPunten(speler.getTotaalPunten() - inzet.getInzetBedrag());
-//			spelerService.save(speler);
 		}
-		inzet.getGame().addInzet(inzet);
-		
+		inzet.getGame().addInzet(inzet);		
 		inzet.getSpeler().addInzet(inzet);
+		
 		this.inzetService.save(inzet);
 		this.gameService.save(inzet.getGame());
 		this.spelerService.save(inzet.getSpeler());
