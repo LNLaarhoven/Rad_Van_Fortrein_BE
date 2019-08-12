@@ -50,6 +50,12 @@ public class GameController {
 		return new ResponseEntity<>(game, game.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
 	}
 	
+	@GetMapping (path = "trein/{treinNaam}")
+	public ResponseEntity<Optional<Game>> apiGetByTrein(@PathVariable String treinNaam) {
+		Optional<Game> game = this.gameService.findByTrein(treinNaam);
+		return new ResponseEntity<>(game, game.isPresent() ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+	}
+	
 	
 	@PutMapping(path = "{id}")
 	public ResponseEntity<Game> apiUpdate(
