@@ -1,7 +1,6 @@
 package radvanfortrein.backend.model;
 
 import java.util.HashSet;
-import java.util.Observable;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -17,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "Games")
-public class Game extends Observable {
+public class Game {
 	
 	static final int RESULTAAT_NIET_BEKEND = 0;
 	static final int RESULTAAT_TREIN_TE_LAAT = 1;
@@ -33,7 +32,6 @@ public class Game extends Observable {
 	
 	@OneToMany //(cascade={CascadeType.MERGE})
 	@JsonIgnoreProperties(value = {"game"}, allowSetters = true)
-//	private long[] inzetten;
 	private Set<Inzet> inzetten = new HashSet<>();
 	
 	private int resultaat;
@@ -76,26 +74,12 @@ public class Game extends Observable {
 	}
 	
 	public int getResultaat() {
-		//this.getTreinResultaat(this.trein);
 		return resultaat;
 	}
 
 	public void setResultaat(int resultaat) {
 		this.resultaat = resultaat;
 	}
-	
-	/*public void getTreinResultaat(Trein trein) {
-		if (trein.isTeLaat()) {
-			this.resultaat = Game.RESULTAAT_TREIN_TE_LAAT;
-		} else {
-			this.resultaat = Game.RESULTAAT_TREIN_OP_TIJD;
-		}
-	}*/
-
-//	public boolean addInzet(Inzet inzet) {
-//		this.inzetten = ArrayUtils.add(this.inzetten, inzet.getId());
-//		return true;
-//	}
 	
 	public boolean addInzet(Inzet inzet) {
 		return this.inzetten.add(inzet);

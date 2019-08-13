@@ -1,9 +1,5 @@
 package radvanfortrein.backend.model;
 
-import java.util.Observable;
-import java.util.Observer;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,17 +11,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name = "Inzet")
-public class Inzet implements Observer{
+public class Inzet{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
-	@ManyToOne //(cascade = {CascadeType.MERGE})
+	@ManyToOne
 	@JsonIgnoreProperties(value = {"inzetten"}, allowSetters = true)
 	private Speler speler;
 	
-	@ManyToOne //(cascade = {CascadeType.MERGE})
+	@ManyToOne
 	@JsonIgnoreProperties(value = {"inzetten"}, allowSetters = true)
 	private Game game;
 	
@@ -97,12 +93,6 @@ public class Inzet implements Observer{
 
 	public void setTeWinnenBedrag(int teWinnenBedrag) {
 		this.teWinnenBedrag = teWinnenBedrag;
-	}
-	
-	@Override
-	public void update(Observable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

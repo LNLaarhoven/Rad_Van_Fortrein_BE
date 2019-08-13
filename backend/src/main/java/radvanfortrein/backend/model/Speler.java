@@ -1,19 +1,12 @@
 package radvanfortrein.backend.model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.apache.commons.lang3.ArrayUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -22,14 +15,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Speler {
 
 	@Id
-	//@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id = 998;
 	
 	private String naam;
 	
 	private int totaalPunten = 500;
 	
-	@OneToMany //(cascade = {CascadeType.MERGE})
+	@OneToMany
 	@JsonIgnoreProperties(value = {"speler"}, allowSetters = true)
 	private Set<Inzet> inzetten = new HashSet<>();
 

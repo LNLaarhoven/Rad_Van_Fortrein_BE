@@ -26,7 +26,6 @@ import radvanfortrein.backend.service.SpelerService;
 @RestController
 @RequestMapping(
 		path = "api/inzetten",
-//		consumes= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE},
 		produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE}
 		)
 public class InzetController {

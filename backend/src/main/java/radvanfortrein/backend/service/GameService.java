@@ -9,10 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import radvanfortrein.backend.model.Game;
-import radvanfortrein.backend.model.Inzet;
 import radvanfortrein.backend.model.Speler;
 import radvanfortrein.backend.model.Station;
-import radvanfortrein.backend.model.Trein;
 import radvanfortrein.backend.repository.GameRepository;
 
 @Service
@@ -54,10 +52,10 @@ public class GameService {
 	void initGameDatabase() {
 		if (gameRepository.count()!=0) return;
 		
-		Game game = gameRepository.save(new Game());
+		gameRepository.save(new Game());
 		
-		Speler gameSpeler = spelerService.save(new Speler("Barry"));
+		spelerService.save(new Speler("Barry"));
 		
-		Station gameStation = stationService.save(new Station("Amsterdam Centraal", "ASD"));
+		stationService.save(new Station("Amsterdam Centraal", "ASD"));
 	}
 }
