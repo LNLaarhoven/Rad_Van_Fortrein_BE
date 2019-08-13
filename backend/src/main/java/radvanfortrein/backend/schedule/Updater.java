@@ -48,7 +48,7 @@ public class Updater extends TimerTask {
 
 		}
 		// ArrayList<Trein> treinen = ontvangTrein(databaseTreinenUrl);
-		ArrayList<Trein> treinen = ontvangTrein(databaseTreinenUrl);
+		ArrayList<Trein> treinen = ontvangTrein(databaseTreinenUrl+"/getAll");
 		for (Trein treinElement : treinen) {
 			System.out
 					.println("UIT DE DATABASE: " + treinElement.getNaam() + " " + treinElement.getOrigin() + " from the database");
@@ -201,7 +201,7 @@ public class Updater extends TimerTask {
 
 		// Als de de tijd tussen geplande tijd en nu minder is dan passedTimeLimit
 		// minuten dan mag hij dit versturen naar de database
-		if (ChronoUnit.MINUTES.between(treinTijd, nu) == 0) {
+		if (ChronoUnit.MINUTES.between(treinTijd, nu) >= 0) {
 			Integer teLaat;
 			if (trein.getTeLaat()) {
 				teLaat = 1;
@@ -265,7 +265,7 @@ public class Updater extends TimerTask {
 						}
 					} else {
 						System.out.println("Fout!");
-						if (poolTotaal[b(!In)] > 0) {
+						if (poolTotaal[b(In)] > 0) {
 							punten = -inzetten.get(i).getInzetBedrag();
 						} else {
 							if (aantalInzettenInGame == 1) {

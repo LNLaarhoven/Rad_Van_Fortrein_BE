@@ -23,8 +23,7 @@ import radvanfortrein.backend.service.TreinService;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping(path = "api/treinen",
-		produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE })
+@RequestMapping(path = "api/treinen", produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE })
 public class TreinController {
 
 	@Autowired
@@ -38,7 +37,7 @@ public class TreinController {
 		}
 		return new ResponseEntity<>(treinService.save(trein), HttpStatus.OK);
 	}
-	
+
 	@GetMapping
 	public ResponseEntity<Iterable<Trein>> apiGetAll() {
 		Iterable<Trein> trein = treinService.findAll();
@@ -46,9 +45,15 @@ public class TreinController {
 		for (Trein t : trein) {
 			if (LocalDateTime.now().isBefore(LocalDateTime.parse(t.getGeplandeAankomsten()[0]))) {
 				treinenNaNu.add(t);
-			} 
+			}
 		}
 		return new ResponseEntity<>(treinenNaNu, HttpStatus.OK);
+	}
+
+	@GetMapping(path = "getAll")
+	public ResponseEntity<Iterable<Trein>> apiGetTrueAll() {
+		ArrayList<Trein> trein = (ArrayList<Trein>) treinService.findAll();
+		return new ResponseEntity<>(trein, HttpStatus.OK);
 	}
 
 	@GetMapping(path = "{naam}")
