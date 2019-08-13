@@ -49,9 +49,10 @@ public class Updater extends TimerTask {
 		}
 		// ArrayList<Trein> treinen = ontvangTrein(databaseTreinenUrl);
 		ArrayList<Trein> treinen = ontvangTrein(databaseTreinenUrl+"/getAll");
+		System.out.println("Haalt alle treinen uit de database...");
 		for (Trein treinElement : treinen) {
-			System.out
-					.println("UIT DE DATABASE: " + treinElement.getNaam() + " " + treinElement.getOrigin() + " from the database");
+			/*System.out
+					.println("UIT DE DATABASE: " + treinElement.getNaam() + " " + treinElement.getOrigin() + " from the database");*/
 			trein = ArrayUtils.add(trein, treinElement);
 		}
 
