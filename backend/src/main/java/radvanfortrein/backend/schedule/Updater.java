@@ -126,7 +126,7 @@ public class Updater extends TimerTask {
 
 		for (Game lopendeGames : games) {
 			for (Trein treinen : trein) {
-				if (treinen.getNaam().equals(lopendeGames.getTrein())) {
+				if (treinen.getNaam().equals(lopendeGames.getTrein()) && lopendeGames.getResultaat() == 0) {
 					controlIfTimeIsPassed(treinen, lopendeGames.getId());
 				}
 			}
