@@ -1,6 +1,7 @@
 package radvanfortrein.backend.model;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -62,6 +63,8 @@ public class Trein {
 	}
 
 	public boolean getTeLaat() {
-		return LocalDateTime.parse(geplandeAankomsten[0]).isBefore(LocalDateTime.parse(werkelijkeAankomsten[0]));
+		LocalDateTime aankomst = LocalDateTime.parse(geplandeAankomsten[0]);
+		LocalDateTime werkelijkeAankomst = LocalDateTime.parse(werkelijkeAankomsten[0]);
+		return (aankomst.isBefore(werkelijkeAankomst) && Math.abs(ChronoUnit.MINUTES.between(aankomst, werkelijkeAankomst)) > 0);
 	}
 }
