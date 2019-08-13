@@ -23,7 +23,6 @@ import radvanfortrein.backend.service.StationService;
 @RestController
 @RequestMapping (
 		path = "api/stations",
-//		consumes= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE},
 		produces= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE}
 		)
 public class StationController {

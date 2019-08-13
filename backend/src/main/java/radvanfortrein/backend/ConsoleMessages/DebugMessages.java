@@ -9,7 +9,7 @@ public class DebugMessages {
 	// GIVES BACK A STATUS TO THE CONSOLE INFORMING IT THAT A TRAIN TIME HAS BEEN
 	// UPDATED
 	public void systemOutUpdate(Trein trein, Arrivals arrivals) {
-		System.out.print("Update: ");
+		System.out.print("Update Trein: ");
 		System.out.print("Origin: " + arrivals.getOrigin());
 		System.out.print(" previous ActualDateTime: " + trein.getWerkelijkeAankomsten()[0]);
 		System.out.println(" new ActualDateTime: " + arrivals.getActualDateTime());
@@ -19,7 +19,7 @@ public class DebugMessages {
 	// GIVES BACK A STATUS TO THE CONSOLE INFORMING IT THAT A NEW TRAIN HAS BEEN
 	// MADE
 	public void systemOutNieuwTrein(Arrivals arrivals) {
-		System.out.print("New: ");
+		System.out.print("Nieuwe Trein: ");
 		System.out.print("Origin: " + arrivals.getOrigin());
 		System.out.print(" Name: " + arrivals.getName());
 		System.out.print(" PlannedDateTime: " + arrivals.getPlannedDateTime());

@@ -24,7 +24,6 @@ import radvanfortrein.backend.service.TreinService;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping(path = "api/treinen",
-//		consumes= {MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE},
 		produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.TEXT_PLAIN_VALUE })
 public class TreinController {
 
@@ -51,11 +50,6 @@ public class TreinController {
 		}
 		return new ResponseEntity<>(treinenNaNu, HttpStatus.OK);
 	}
-
-//	@GetMapping
-//	public ResponseEntity<Iterable<Trein>> apiGetAll() {
-//			return new ResponseEntity<>(treinService.findAll(), HttpStatus.OK);
-//	}
 
 	@GetMapping(path = "{naam}")
 	public ResponseEntity<Optional<Trein>> apiGetById(@PathVariable String naam) {

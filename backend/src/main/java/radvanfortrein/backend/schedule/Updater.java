@@ -17,7 +17,6 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 public class Updater extends TimerTask {
-	long singleGameID = 999;
 	String myStation = "ASD"; // THE NAME OF THE STATION AS NS KNOWS IT
 	Station station = new Station("Amsterdam Centraal", myStation); // MAKES A OBJECT OF THE STATION
 	int maxJourneys = 50; // LISTS THE MAX AMOUNT OF JOURNEYS THE API MAY PULL
@@ -48,10 +47,11 @@ public class Updater extends TimerTask {
 					.println("EXCEPTION: ER IS GEEN INTERNET!!! Om NS treinen te downloaden moet je internet hebben!");
 
 		}
+		// ArrayList<Trein> treinen = ontvangTrein(databaseTreinenUrl);
 		ArrayList<Trein> treinen = ontvangTrein(databaseTreinenUrl);
 		for (Trein treinElement : treinen) {
 			System.out
-					.println("GET: " + treinElement.getNaam() + " " + treinElement.getOrigin() + " from the database");
+					.println("UIT DE DATABASE: " + treinElement.getNaam() + " " + treinElement.getOrigin() + " from the database");
 			trein = ArrayUtils.add(trein, treinElement);
 		}
 
@@ -126,7 +126,7 @@ public class Updater extends TimerTask {
 
 		for (Game lopendeGames : games) {
 			for (Trein treinen : trein) {
-				if (treinen.getNaam().equals(lopendeGames.getTrein())) {
+				if (treinen.getNaam().equals(lopendeGames.getTrein()) && lopendeGames.getResultaat() == 0) {
 					controlIfTimeIsPassed(treinen, lopendeGames.getId());
 				}
 			}
@@ -145,7 +145,6 @@ public class Updater extends TimerTask {
 		// zonder de database)
 		try { // kijkt of een trein gepost kan worden
 			verzenden(trein, databaseTreinenUrl, HttpMethod.POST);
-			System.out.println("Trein " + trein.getNaam() + " wordt aangemaakt in de database.");
 		} catch (HttpClientErrorException e) { // krijgt deze een error omdat de trein in de database al bestaat?
 			// Dan probeert hij deze in de database te updaten ipv. opnieuw aan te maken
 			try {
@@ -197,7 +196,7 @@ public class Updater extends TimerTask {
 	private void controlIfTimeIsPassed(Trein trein, long id) {
 		LocalDateTime nu = LocalDateTime.now();
 		LocalDateTime treinTijd = LocalDateTime.parse(trein.getGeplandeAankomsten()[0]);
-		System.out.println("Tijd tussen nu en geplandeAankomstTijd: " + ChronoUnit.MINUTES.between(treinTijd, nu));
+		System.out.println("Een game gevonden die verloopt over " + -ChronoUnit.MINUTES.between(treinTijd, nu) + " minuten.");
 		// De trein zijn geplande tijd is verstreken
 
 		// Als de de tijd tussen geplande tijd en nu minder is dan passedTimeLimit
@@ -209,8 +208,8 @@ public class Updater extends TimerTask {
 			} else {
 				teLaat = 2;
 			}
-			System.out.println("De aankomst tijd van " + trein.getNaam() + " is verstreken, de trein is "
-					+ (trein.getTeLaat() ? "te laat!" : "op tijd!"));
+			System.out.println("[[De aankomst tijd van " + trein.getNaam() + " is verstreken, de trein is "
+					+ (trein.getTeLaat() ? "te laat!]]" : "op tijd!]]"));
 			verzenden(teLaat, databaseGameUrl + "/" + id + "/Resultaat", HttpMethod.PUT);
 			verdeelInzet(trein.getTeLaat(), id);
 		}
@@ -230,7 +229,6 @@ public class Updater extends TimerTask {
 			for (int i = 0; i < inzetten.size(); i++) {
 				if (inzetten.get(i).getGame().getId() == id) {
 					aantalInzettenInGame++;
-					System.out.println(i);
 					if (inzetten.get(i).isInzetTeLaat()) {
 						telaatPool.add(inzetten.get(i).getInzetBedrag());
 					} else {
@@ -253,7 +251,7 @@ public class Updater extends TimerTask {
 				if (inzetten.get(i).getGame().getId() == id) {
 					int punten = 0;
 					boolean In = inzetten.get(i).isInzetTeLaat();
-					System.out.println("Gelezen speler inzet:"+In+", teLaat boolean:"+teLaat+", speler inzet bedrag is:"+inzetten.get(i).getInzetBedrag() );
+
 					if (In == teLaat) {
 						System.out.println("Goed!");
 						// krijg het percentage van jouw inzet in de pool van de andere pool
@@ -271,12 +269,12 @@ public class Updater extends TimerTask {
 							punten = -inzetten.get(i).getInzetBedrag();
 						} else {
 							if (aantalInzettenInGame == 1) {
-								punten = 0;//inzetten.get(i).getInzetBedrag() / 2; // halveerd als er maar 1 speler is
+								punten = 0;// inzetten.get(i).getInzetBedrag() / 2; // halveerd als er maar 1 speler is
 							}
 						}
 					}
 					System.out.println(
-							"Speler " + inzetten.get(i).getSpeler().getId() + " krijgt " + punten + " punten.");
+							"Speler " + inzetten.get(i).getSpeler().getNaam() + " krijgt " + punten + " punten.");
 					verzenden(inzetten.get(i).getSpeler(),
 							databaseSpelerUrl + "/" + inzetten.get(i).getSpeler().getId() + "/" + punten,
 							HttpMethod.PUT);
@@ -323,12 +321,14 @@ public class Updater extends TimerTask {
 		return response.getBody();
 	}
 
-	/*
-	 * private <T> ArrayList<T> ontvang(Class<T> type, String url) { // HTTP GET
-	 * REQUIREMENTS HttpHeaders headers = new HttpHeaders(); HttpEntity<String>
-	 * entity = new HttpEntity<>(headers); RestTemplate restTemplate = new
-	 * RestTemplate(); ResponseEntity<ArrayList<T>> response =
-	 * restTemplate.exchange(url, HttpMethod.GET, entity, new
-	 * ParameterizedTypeReference<ArrayList<T>>() { }); return response.getBody(); }
-	 */
+	/*private <T> ArrayList<T> ontvang(Class<T> type,String url) { // HTTP GET
+		HttpHeaders headers = new HttpHeaders();
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<ArrayList<T>> response = restTemplate.exchange(url, HttpMethod.GET, entity,
+				new ParameterizedTypeReference<ArrayList<T>>() {
+				});
+		return response.getBody();
+	}*/
+
 }
