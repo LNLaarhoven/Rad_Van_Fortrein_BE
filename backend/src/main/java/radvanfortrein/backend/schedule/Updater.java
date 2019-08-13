@@ -194,7 +194,6 @@ public class Updater extends TimerTask {
 	}
 
 	private void controlIfTimeIsPassed(Trein trein, long id) {
-		int keepCheckingUntilXMinutes = 5;
 		LocalDateTime nu = LocalDateTime.now();
 		LocalDateTime treinTijd = LocalDateTime.parse(trein.getGeplandeAankomsten()[0]);
 		System.out.println("Een game gevonden die verloopt over " + -ChronoUnit.MINUTES.between(treinTijd, nu) + " minuten.");
@@ -202,7 +201,7 @@ public class Updater extends TimerTask {
 
 		// Als de de tijd tussen geplande tijd en nu minder is dan passedTimeLimit
 		// minuten dan mag hij dit versturen naar de database
-		if (ChronoUnit.MINUTES.between(treinTijd, nu) >= 0 && ChronoUnit.MINUTES.between(treinTijd, nu) < keepCheckingUntilXMinutes) {
+		if (ChronoUnit.MINUTES.between(treinTijd, nu) == 0) {
 			Integer teLaat;
 			if (trein.getTeLaat()) {
 				teLaat = 1;
