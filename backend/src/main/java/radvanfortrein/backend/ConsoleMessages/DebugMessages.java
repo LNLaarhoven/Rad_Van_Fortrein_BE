@@ -20,7 +20,7 @@ public class DebugMessages {
 	// MADE
 	public void systemOutNieuwTrein(Departures departures) {
 		System.out.print("Nieuwe Trein: ");
-		System.out.print("Origin: " + departures.getDirection());
+		System.out.print("Direction: " + departures.getDirection());
 		System.out.print(" Name: " + departures.getName());
 		System.out.print(" PlannedDateTime: " + departures.getPlannedDateTime());
 		System.out.println(" ActualDateTime: " + departures.getActualDateTime());
