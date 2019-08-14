@@ -14,7 +14,7 @@ public class Trein {
 	@Id
 	private String naam;
 
-	private String origin;
+	private String direction;
 	private String[] geplandeAankomsten;
 	private String[] werkelijkeAankomsten;
 
@@ -23,9 +23,9 @@ public class Trein {
 
 	}
 
-	public Trein(String naam, String origin, String[] geplandeAankomsten, String[] werkelijkeAankomsten) {
+	public Trein(String naam, String direction, String[] geplandeAankomsten, String[] werkelijkeAankomsten) {
 		this.naam = naam;
-		this.origin = origin;
+		this.direction = direction;
 		this.geplandeAankomsten = geplandeAankomsten;
 		this.werkelijkeAankomsten = werkelijkeAankomsten;
 	}
@@ -38,12 +38,12 @@ public class Trein {
 		this.naam = naam;
 	}
 
-	public String getOrigin() {
-		return origin;
+	public String getDirection() {
+		return direction;
 	}
 
-	public void setOrigin(String origin) {
-		this.origin = origin;
+	public void setDirection(String direction) {
+		this.direction = direction;
 	}
 
 	public String[] getGeplandeAankomsten() {

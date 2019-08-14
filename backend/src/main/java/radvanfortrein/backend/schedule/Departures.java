@@ -5,8 +5,8 @@ import java.time.LocalDateTime;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Arrivals {
-	private String origin;
+public class Departures {
+	private String direction;
 	private String name;
 	private boolean cancelled;
 	private LocalDateTime plannedDateTime;
@@ -44,12 +44,12 @@ public class Arrivals {
 		this.name = name;
 	}
 
-	public String getOrigin() {
-		return origin;
+	public String getDirection() {
+		return direction;
 	}
 
-	public void setOrigin(String origin) {
-		this.origin = origin;
+	public void setDirection(String direction) {
+		this.direction = direction;
 	}
 
 }

@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Payload {
 
-	private Arrivals[] arrivals;
+	private Departures[] departures;
 
-	public Arrivals[] getArrivals() {
-		return arrivals;
+	public Departures[] getDepartures() {
+		return departures;
 	}
 
-	public void setArrivals(Arrivals[] arrivals) {
-		this.arrivals = arrivals;
+	public void setDepartures(Departures[] departures) {
+		this.departures = departures;
 	}
 }
