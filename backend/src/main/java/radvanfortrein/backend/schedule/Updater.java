@@ -39,9 +39,9 @@ public class Updater extends TimerTask {
 	void updateAlleTreinen(String time, String station) {
 		Trein[] trein = new Trein[0];
 		// haalt alle treinen van de komende 2 uur van het aangegeven station
-		Arrivals[] arrivals = new Arrivals[0];
+		Departures[] departures = new Departures[0];
 		try {
-			arrivals = StationTreinen(time, station);
+			departures = StationTreinen(time, station);
 		} catch (ResourceAccessException e) {
 			System.out
 					.println("EXCEPTION: ER IS GEEN INTERNET!!! Om NS treinen te downloaden moet je internet hebben!");
@@ -52,11 +52,11 @@ public class Updater extends TimerTask {
 		System.out.println("Haalt alle treinen uit de database...");
 		for (Trein treinElement : treinen) {
 			/*System.out
-					.println("UIT DE DATABASE: " + treinElement.getNaam() + " " + treinElement.getOrigin() + " from the database");*/
+					.println("UIT DE DATABASE: " + treinElement.getNaam() + " " + treinElement.getDirection() + " from the database");*/
 			trein = ArrayUtils.add(trein, treinElement);
 		}
 
-		trein = handelUpdatesEnNieuweTreinen(arrivals, trein);
+		trein = handelUpdatesEnNieuweTreinen(departures, trein);
 
 		String[] nieuweTreinen = new String[0];
 		for (Trein treinElement : trein) {
@@ -67,19 +67,19 @@ public class Updater extends TimerTask {
 
 	// CONTROLS ALL THE TRAINS IT FOUND FROM THE NS API AND SHOWS IF THEY ARE NEW TO
 	// THE PROGRAM AND WEITHER THEIR TIMES HAVE BEEN UPDATED
-	private Trein[] handelUpdatesEnNieuweTreinen(Arrivals[] arrivals, Trein[] trein) {
+	private Trein[] handelUpdatesEnNieuweTreinen(Departures[] departures, Trein[] trein) {
 		boolean updates = false;
 		if (trein == null) {
-			trein = new Trein[] { addNewTrain(arrivals[0]) };
+			trein = new Trein[] { addNewTrain(departures[0]) };
 			updates = true;
-			c.systemOutNieuwTrein(arrivals[0]);
+			c.systemOutNieuwTrein(departures[0]);
 		}
-		for (int i = 0; i < arrivals.length; i++) {
+		for (int i = 0; i < departures.length; i++) {
 
 			boolean nieuweTrein = true;
 			for (int j = 0; j < trein.length; j++) {
-				if (arrivals[i].getName().equals(trein[j].getNaam())
-						&& arrivals[i].getOrigin().equals(trein[j].getOrigin())) {
+				if (departures[i].getName().equals(trein[j].getNaam())
+						&& departures[i].getDirection().equals(trein[j].getDirection())) {
 					/*
 					 * Als een trein dezelfde origine heeft EN dezelfde naam, dan weet je zeker dat
 					 * je het over dezelfde trein hebt
@@ -87,15 +87,15 @@ public class Updater extends TimerTask {
 					/* check if the actualDateTime still matches, else update */
 					nieuweTrein = false; /* Een bekende trein gevonden */
 					if (LocalDateTime.parse(trein[j].getWerkelijkeAankomsten()[0])
-							.compareTo(LocalDateTime.parse(arrivals[i].getActualDateTime())) > 0) {
+							.compareTo(LocalDateTime.parse(departures[i].getActualDateTime())) > 0) {
 						/*
 						 * vergelijkt of de actuele tijd nog overeen komt met die van het object Trein
 						 */
 						updates = true;
 						/* De tijd is verandert dus dit moet doorgegeven worden */
-						c.systemOutUpdate(trein[j], arrivals[i]);
+						c.systemOutUpdate(trein[j], departures[i]);
 						/* Bericht voor de console dat een trein geupdate gaat worden. */
-						trein[j].setWerkelijkeAankomsten(new String[] { arrivals[i].getActualDateTime() });
+						trein[j].setWerkelijkeAankomsten(new String[] { departures[i].getActualDateTime() });
 						/* Trein oject gaat veranderen met de nieuwe tijden er in. */
 						verzenden(trein[j], databaseTreinenUrl + "/" + trein[j].getNaam(), HttpMethod.PUT);
 						/*
@@ -113,9 +113,9 @@ public class Updater extends TimerTask {
 				/* nieuwe trein */
 				updates = true;
 				/* Database gaat geupdate worden dus updates moet true zijn. */
-				c.systemOutNieuwTrein(arrivals[i]);
+				c.systemOutNieuwTrein(departures[i]);
 				/* Communiceerd via de console dat er een nieuwe trein gemaakt gaat worden. */
-				trein = ArrayUtils.addAll(trein, addNewTrain(arrivals[i]));
+				trein = ArrayUtils.addAll(trein, addNewTrain(departures[i]));
 				/* Voegd een niewe trein toe aan de huidige array. */
 			}
 		}
@@ -138,10 +138,10 @@ public class Updater extends TimerTask {
 	}
 
 	// MAKES A NEW TRAIN OBJECT, CAN BE USED TO ADD TO A ARRAYLIST
-	private Trein addNewTrain(Arrivals arrival) {
-		String[] arrivalPlannedDateTime = new String[] { arrival.getPlannedDateTime() };
-		String[] arrivalActualDateTime = new String[] { arrival.getActualDateTime() };
-		Trein trein = new Trein(arrival.getName(), arrival.getOrigin(), arrivalPlannedDateTime, arrivalActualDateTime);
+	private Trein addNewTrain(Departures departure) {
+		String[] arrivalPlannedDateTime = new String[] { departure.getPlannedDateTime() };
+		String[] arrivalActualDateTime = new String[] { departure.getActualDateTime() };
+		Trein trein = new Trein(departure.getName(), departure.getDirection(), arrivalPlannedDateTime, arrivalActualDateTime);
 		// mag verbinden met de database (kan op false gezet worden als je wilt debuggen
 		// zonder de database)
 		try { // kijkt of een trein gepost kan worden
@@ -172,7 +172,7 @@ public class Updater extends TimerTask {
 
 	// GETS ALL THE TRAINS IN THE COMING 2 HOURS FROM THE NS API (REQUIRES OBJECTS
 	// TO FIT THE INCOMING DATA)
-	private Arrivals[] StationTreinen(String time, String station) {
+	private Departures[] StationTreinen(String time, String station) {
 		try {
 			// HTTP GET REQUIREMENTS
 			HttpHeaders headers = new HttpHeaders();
@@ -182,14 +182,14 @@ public class Updater extends TimerTask {
 			RestTemplate restTemplate = new RestTemplate();
 			ResponseEntity<ThisStation> response = restTemplate
 					.exchange(
-							"https://gateway.apiportal.ns.nl/public-reisinformatie/api/v2/arrivals?" + time
+							"https://gateway.apiportal.ns.nl/public-reisinformatie/api/v2/departures?" + time
 									+ "&maxJourneys=" + maxJourneys + "&lang=nl&station=" + station,
 							HttpMethod.GET, entity, ThisStation.class);
-			return response.getBody().getPayload().getArrivals();
+			return response.getBody().getPayload().getDepartures();
 		} catch (HttpServerErrorException e) {
 			System.out.println(
 					"EXCEPTION!: Het was niet mogelijk om de data van de NS binnen te halen. Controleer of je een goeie verbinding hebt(404). Het kan ook aan de API van de NS liggen (503).");
-			return new Arrivals[0];
+			return new Departures[0];
 		}
 
 	}

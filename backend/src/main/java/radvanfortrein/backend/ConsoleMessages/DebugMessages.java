@@ -8,30 +8,30 @@ import radvanfortrein.backend.schedule.*;
 public class DebugMessages {
 	// GIVES BACK A STATUS TO THE CONSOLE INFORMING IT THAT A TRAIN TIME HAS BEEN
 	// UPDATED
-	public void systemOutUpdate(Trein trein, Arrivals arrivals) {
+	public void systemOutUpdate(Trein trein, Departures departures) {
 		System.out.print("Update Trein: ");
-		System.out.print("Origin: " + arrivals.getOrigin());
+		System.out.print("Direction: " + departures.getDirection());
 		System.out.print(" previous ActualDateTime: " + trein.getWerkelijkeAankomsten()[0]);
-		System.out.println(" new ActualDateTime: " + arrivals.getActualDateTime());
-		systemOutTreinTeLaat(arrivals);
+		System.out.println(" new ActualDateTime: " + departures.getActualDateTime());
+		systemOutTreinTeLaat(departures);
 	}
 
 	// GIVES BACK A STATUS TO THE CONSOLE INFORMING IT THAT A NEW TRAIN HAS BEEN
 	// MADE
-	public void systemOutNieuwTrein(Arrivals arrivals) {
+	public void systemOutNieuwTrein(Departures departures) {
 		System.out.print("Nieuwe Trein: ");
-		System.out.print("Origin: " + arrivals.getOrigin());
-		System.out.print(" Name: " + arrivals.getName());
-		System.out.print(" PlannedDateTime: " + arrivals.getPlannedDateTime());
-		System.out.println(" ActualDateTime: " + arrivals.getActualDateTime());
-		systemOutTreinTeLaat(arrivals);
+		System.out.print("Origin: " + departures.getDirection());
+		System.out.print(" Name: " + departures.getName());
+		System.out.print(" PlannedDateTime: " + departures.getPlannedDateTime());
+		System.out.println(" ActualDateTime: " + departures.getActualDateTime());
+		systemOutTreinTeLaat(departures);
 	}
 
 	// GIVES BACK A STATUS TO THE CONSOLE INFORMING IT THAT A TRAIN IS LATER THAN
 	// SCEDULED
-	public void systemOutTreinTeLaat(Arrivals arrivals) {
-		if (LocalDateTime.parse(arrivals.getPlannedDateTime())
-				.isBefore(LocalDateTime.parse(arrivals.getActualDateTime()))) {
+	public void systemOutTreinTeLaat(Departures departures) {
+		if (LocalDateTime.parse(departures.getPlannedDateTime())
+				.isBefore(LocalDateTime.parse(departures.getActualDateTime()))) {
 			System.out.println("TE LAAT! Dat gaat niet goed!");
 		}
 	}

@@ -32,8 +32,8 @@ public class TreinService {
 		this.treinRepository.deleteById(naam);
 	}
 	
-	public Iterable<Trein> findByOrigin(String origin) {
-		return this.treinRepository.findByOrigin(origin);
+	public Iterable<Trein> findByDirection(String direction) {
+		return this.treinRepository.findByDirection(direction);
 	}
 	
 }
